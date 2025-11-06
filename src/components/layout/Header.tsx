@@ -1,5 +1,5 @@
 import { Link, useNavigate } from 'react-router-dom';
-import { ShoppingCart, Search, LogOut } from 'lucide-react';
+import { ShoppingCart, Search, LogOut, Settings, Package, PlusCircle, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -12,6 +12,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
 
 const Header = () => {
   const { t } = useLanguage();
@@ -85,24 +86,56 @@ const Header = () => {
                       {user.email?.charAt(0).toUpperCase()}
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuItem onClick={() => navigate('/account')}>
-                      {t('manage_profile')}
-                    </DropdownMenuItem>
-                    {hasRole('seller_approved') && (
-                      <DropdownMenuItem onClick={() => navigate('/seller')}>
-                        {t('seller_dashboard')}
+                  <DropdownMenuContent align="end" className="w-64">
+                    {/* User header */}
+                    <div className="px-4 py-3">
+                      <div className="flex items-center gap-3">
+                        <div className="h-12 w-12 rounded-full bg-muted-foreground flex items-center justify-center text-muted"> 
+                          <User className="h-6 w-6 text-muted-foreground" />
+                        </div>
+                        <div>
+                          <div className="font-medium">{(user.user_metadata as any)?.full_name || user.email}</div>
+                          <div className="text-xs text-muted-foreground">{user.email}</div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="px-2">
+                      <DropdownMenuItem onClick={() => navigate('/account')}>
+                        <Settings className="mr-2 h-4 w-4" />
+                        {t('manage_profile')}
                       </DropdownMenuItem>
-                    )}
-                    {hasRole('admin') && (
-                      <DropdownMenuItem onClick={() => navigate('/admin')}>
-                        {t('admin_dashboard')}
+
+                      <DropdownMenuItem onClick={() => navigate('/account')}>
+                        <Package className="mr-2 h-4 w-4" />
+                        {t('myOrders')}
                       </DropdownMenuItem>
-                    )}
-                    <DropdownMenuItem onClick={signOut}>
-                      <LogOut className="mr-2 h-4 w-4" />
-                      {t('logout')}
-                    </DropdownMenuItem>
+
+                      {hasRole('seller_approved') && (
+                        <DropdownMenuItem onClick={() => navigate('/seller')}>
+                          <User className="mr-2 h-4 w-4" />
+                          {t('seller_dashboard')}
+                        </DropdownMenuItem>
+                      )}
+
+                      {hasRole('admin') && (
+                        <DropdownMenuItem onClick={() => navigate('/admin')}>
+                          <User className="mr-2 h-4 w-4" />
+                          {t('admin_dashboard')}
+                        </DropdownMenuItem>
+                      )}
+
+                      <DropdownMenuItem onClick={signOut}>
+                        <LogOut className="mr-2 h-4 w-4" />
+                        {t('logout')}
+                      </DropdownMenuItem>
+
+                      <DropdownMenuSeparator />
+
+                      <DropdownMenuItem onClick={() => navigate('/auth?add=1')}>
+                        <PlusCircle className="mr-2 h-4 w-4" />
+                        {t('add_account') || 'Add account'}
+                      </DropdownMenuItem>
+                    </div>
                   </DropdownMenuContent>
                 </DropdownMenu>
               ) : (
