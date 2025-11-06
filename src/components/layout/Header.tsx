@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ShoppingCart, Search, LogOut, Settings, Package, PlusCircle, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -13,11 +14,13 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
+import AccountDialog from '@/components/account/AccountDialog';
 
 const Header = () => {
   const { t } = useLanguage();
   const { user, signOut, hasRole } = useAuth();
   const navigate = useNavigate();
+  const [accountOpen, setAccountOpen] = useState(false);
 
   return (
     <>
@@ -80,6 +83,7 @@ const Header = () => {
               </Link>
 
               {user ? (
+                <>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-full">
@@ -100,10 +104,10 @@ const Header = () => {
                       </div>
                     </div>
                     <div className="px-2">
-                      <DropdownMenuItem onClick={() => navigate('/account')}>
-                        <Settings className="mr-2 h-4 w-4" />
-                        {t('manage_profile')}
-                      </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => setAccountOpen(true)}>
+                            <Settings className="mr-2 h-4 w-4" />
+                            {t('manage_profile')}
+                          </DropdownMenuItem>
 
                       <DropdownMenuItem onClick={() => navigate('/account')}>
                         <Package className="mr-2 h-4 w-4" />
@@ -137,7 +141,9 @@ const Header = () => {
                       </DropdownMenuItem>
                     </div>
                   </DropdownMenuContent>
-                </DropdownMenu>
+                  </DropdownMenu>
+                  <AccountDialog open={accountOpen} onOpenChange={setAccountOpen} />
+                </>
               ) : (
                 <Link to="/auth">
                   <Button className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-full">
