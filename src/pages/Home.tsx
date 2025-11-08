@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import type { Database } from '@/types/supabase';
 import { useLanguage } from '@/contexts/LanguageContext';
 import ProductCard from '@/components/ProductCard';
 import CategoryCard from '@/components/CategoryCard';
@@ -12,13 +13,58 @@ import { Skeleton } from '@/components/ui/skeleton';
 const Home = () => {
   const { language, t } = useLanguage();
 
+  type CategoryWithTranslations = Database['public']['Tables']['categories']['Row'] & {
+    category_translations: Array<Database['public']['Tables']['category_translations']['Row']>
+  };
+
+  type ProductWithTranslations = Database['public']['Tables']['products']['Row'] & {
+    product_translations: Array<{
+      id: string;
+      product_id: string;
+      language_code: 'en' | 'ar';
+      name: string;
+      description: string | null;
+    }>
+  };
+
+  type StoreWithTranslations = {
+    id: string;
+    name: string;
+    slug: string;
+    description: string | null;
+    logo_url: string | null;
+    cover_url: string | null;
+    rating: number;
+    total_products: number;
+    created_at: string;
+    updated_at: string;
+    store_translations: Array<{
+      id: string;
+      store_id: string;
+      language_code: 'en' | 'ar';
+      name: string;
+      description: string | null;
+    }>;
+  };
+
   const { data: categories, isLoading: categoriesLoading } = useQuery({
     queryKey: ['categories', language],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('categories')
-        .select('*, category_translations(*)')
-        .limit(6);
+        .select(`
+          *,
+          category_translations (
+            id,
+            name,
+            description,
+            language_code
+          )
+        `)
+        .limit(6) as unknown as { 
+          data: CategoryWithTranslations[],
+          error: any 
+        };
       if (error) throw error;
       return data;
     },
@@ -29,9 +75,20 @@ const Home = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('products')
-        .select('*, product_translations(*)')
+        .select(`
+          *,
+          product_translations (
+            id,
+            name,
+            description,
+            language_code
+          )
+        `)
         .eq('is_featured', true)
-        .limit(8);
+        .limit(8) as unknown as {
+          data: ProductWithTranslations[],
+          error: any
+        };
       if (error) throw error;
       return data;
     },
@@ -42,9 +99,20 @@ const Home = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('products')
-        .select('*, product_translations(*)')
+        .select(`
+          *,
+          product_translations (
+            id,
+            name,
+            description,
+            language_code
+          )
+        `)
         .order('rating', { ascending: false })
-        .limit(8);
+        .limit(8) as unknown as {
+          data: ProductWithTranslations[],
+          error: any
+        };
       if (error) throw error;
       return data;
     },
@@ -56,9 +124,20 @@ const Home = () => {
       // approximate best-selling by reviews_count (proxy for popularity)
       const { data, error } = await supabase
         .from('products')
-        .select('*, product_translations(*)')
+        .select(`
+          *,
+          product_translations (
+            id,
+            name,
+            description,
+            language_code
+          )
+        `)
         .order('reviews_count', { ascending: false })
-        .limit(8);
+        .limit(8) as unknown as {
+          data: ProductWithTranslations[],
+          error: any
+        };
       if (error) throw error;
       return data;
     },
@@ -69,14 +148,32 @@ const Home = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('stores')
-        .select('*, store_translations(*)')
-        .limit(6);
+        .select(`
+          *,
+          store_translations (
+            id,
+            name,
+            description,
+            language_code
+          )
+        `)
+        .limit(6) as unknown as {
+          data: StoreWithTranslations[],
+          error: any
+        };
       if (error) throw error;
       return data;
     },
   });
 
-  const getTranslation = (translations: any[], fallback: string) => {
+  interface Translation {
+    id: string;
+    language_code: 'en' | 'ar';
+    name: string;
+    description?: string | null;
+  }
+
+  const getTranslation = (translations: Translation[], fallback: string) => {
     const translation = translations?.find((t) => t.language_code === language);
     return translation?.name || fallback;
   };
@@ -84,21 +181,25 @@ const Home = () => {
   return (
     <div className="container mx-auto px-6 md:px-12 lg:px-20 py-8">
       {/* Hero Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-8">
-        <section className="lg:col-span-2 rounded-3xl bg-[hsl(var(--hero-mint))] p-8 md:p-12 relative overflow-hidden">
-          <div className="inline-flex items-center gap-2 bg-[hsl(var(--accent))] text-accent-foreground px-4 py-1 rounded-full text-xs font-medium mb-6">
-            <span className="font-bold">NEWS</span>
-            <span>Free Shipping on Orders Above $50!</span>
-          </div>
-          
-          <div className="max-w-md">
-            <h1 className="text-4xl md:text-5xl font-bold mb-2">
-              Gadgets <span className="text-primary">you'll love.</span>
-            </h1>
-            <h2 className="text-4xl md:text-5xl font-bold mb-6">
-              Prices you'll trust.
-            </h2>
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-12">
+        <section className="lg:col-span-8 rounded-3xl bg-[hsl(var(--hero-mint))] p-8 md:p-12 relative overflow-hidden min-h-[500px] flex flex-col justify-between">
+          <div>
+            <div className="inline-flex items-center gap-2 bg-[hsl(var(--accent))] text-accent-foreground px-4 py-1.5 rounded-full text-xs font-medium mb-8">
+              <span className="font-bold">NEWS</span>
+              <span>Free Shipping on Orders Above $50!</span>
+            </div>
             
+            <div className="max-w-md">
+              <h1 className="text-4xl md:text-5xl font-bold mb-2">
+                Gadgets <span className="text-primary">you'll love.</span>
+              </h1>
+              <h2 className="text-4xl md:text-5xl font-bold mb-8">
+                Prices you'll trust.
+              </h2>
+            </div>
+          </div>
+
+          <div>
             <p className="text-sm text-muted-foreground mb-2">Starts from</p>
             <p className="text-4xl font-bold mb-6">$4.90</p>
             
@@ -111,35 +212,68 @@ const Home = () => {
           </div>
         </section>
 
-        <div className="flex flex-col gap-4">
-          <Link to="/shop" className="block">
-            <div className="rounded-3xl bg-[hsl(var(--hero-peach))] p-8 h-full hover:scale-105 transition-transform">
-              <h3 className="text-2xl font-bold mb-2">Best products</h3>
-              <p className="text-sm text-muted-foreground mb-4">View more →</p>
+        <div className="lg:col-span-4 grid grid-rows-2 gap-6 h-full">
+          <Link to="/shop" className="block h-full">
+            <div className="rounded-3xl bg-[hsl(var(--hero-peach))] p-8 h-full hover:scale-[1.02] transition-transform flex flex-col justify-between">
+              <div>
+                <h3 className="text-2xl font-bold">Best products</h3>
+                <p className="text-sm text-muted-foreground mt-2">Find the perfect gadget</p>
+              </div>
+              <p className="text-sm font-medium flex items-center gap-2 mt-4">
+                View more <ArrowRight className="h-4 w-4" />
+              </p>
             </div>
           </Link>
           
-          <Link to="/shop" className="block">
-            <div className="rounded-3xl bg-[hsl(var(--hero-blue))] p-8 h-full hover:scale-105 transition-transform">
-              <h3 className="text-2xl font-bold mb-2">20% discounts</h3>
-              <p className="text-sm text-muted-foreground mb-4">View more →</p>
+          <Link to="/shop" className="block h-full">
+            <div className="rounded-3xl bg-[hsl(var(--hero-blue))] p-8 h-full hover:scale-[1.02] transition-transform flex flex-col justify-between">
+              <div>
+                <h3 className="text-2xl font-bold">20% discounts</h3>
+                <p className="text-sm text-muted-foreground mt-2">Limited time offers</p>
+              </div>
+              <p className="text-sm font-medium flex items-center gap-2 mt-4">
+                View more <ArrowRight className="h-4 w-4" />
+              </p>
             </div>
           </Link>
         </div>
       </div>
 
       {/* Categories Carousel */}
-      <section className="mb-12 overflow-hidden">
-        <div className="flex gap-3 overflow-x-auto pb-4 scrollbar-hide">
-          {categoriesLoading
-            ? Array.from({ length: 8 }).map((_, i) => (
-                <Skeleton key={i} className="min-w-[120px] h-10 rounded-full" />
-              ))
-            : categories?.map((category) => (
+      <section className="mb-12 overflow-hidden px-6 md:px-12 lg:px-20 relative">
+        <div className="overflow-hidden relative">
+          <div 
+            className={`infinite-scroll-container ${language === 'ar' ? 'infinite-scroll-rtl' : ''}`}
+            style={{ '--scroll-items': categories?.length || 8 } as React.CSSProperties}
+          >
+            <div className="infinite-scroll-content">
+              {/* Original items */}
+              {categoriesLoading
+                ? Array.from({ length: 8 }).map((_, i) => (
+                    <div key={`skeleton-${i}`} className="inline-flex px-1.5">
+                      <Skeleton className="min-w-[120px] h-10 rounded-full" />
+                    </div>
+                  ))
+                : categories?.map((category) => (
+                    <Link 
+                      key={category.id}
+                      to={`/shop?category=${category.slug}`}
+                      className="inline-flex px-1.5"
+                    >
+                      <div className="px-6 py-2 rounded-full bg-muted hover:bg-muted/80 transition-colors whitespace-nowrap">
+                        <span className="text-sm font-medium">
+                          {getTranslation(category.category_translations, 'Category')}
+                        </span>
+                      </div>
+                    </Link>
+                  ))}
+              
+              {/* Cloned items for seamless loop */}
+              {!categoriesLoading && categories?.map((category) => (
                 <Link 
-                  key={category.id}
+                  key={`clone-${category.id}`}
                   to={`/shop?category=${category.slug}`}
-                  className="min-w-fit"
+                  className="inline-flex px-1.5"
                 >
                   <div className="px-6 py-2 rounded-full bg-muted hover:bg-muted/80 transition-colors whitespace-nowrap">
                     <span className="text-sm font-medium">
@@ -148,6 +282,12 @@ const Home = () => {
                   </div>
                 </Link>
               ))}
+            </div>
+          </div>
+
+          {/* Gradient masks for smooth fade (same placement for LTR/RTL by design) */}
+          <div className="absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-background to-transparent z-10" />
+          <div className="absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-background to-transparent z-10" />
         </div>
       </section>
 

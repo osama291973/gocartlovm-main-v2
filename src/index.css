@@ -111,12 +111,57 @@ All colors MUST be HSL.
 }
 
 @layer utilities {
-  .scrollbar-hide {
+  .no-scrollbar {
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
   
-  .scrollbar-hide::-webkit-scrollbar {
+  .no-scrollbar::-webkit-scrollbar {
     display: none;
+  }
+
+  .infinite-scroll-container {
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+    padding: 0.75rem;
+  }
+
+  .infinite-scroll-content {
+    display: inline-flex;
+    white-space: nowrap;
+    will-change: transform;
+    animation: scroll 30s linear infinite;
+    animation-play-state: running;
+  }
+
+  .infinite-scroll-container:hover .infinite-scroll-content {
+    animation-play-state: paused;
+  }
+
+  /* RTL behavior: when container has .infinite-scroll-rtl we reverse the animation so Arabic moves left-to-right */
+  .infinite-scroll-rtl .infinite-scroll-content {
+    animation-direction: reverse;
+  }
+
+  @keyframes scroll {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(calc(-50% - 0.75rem));
+    }
+  }
+
+  /* Category item hover effect */
+  .infinite-scroll-content a:hover {
+    transform: translateY(-2px);
+    transition: transform 0.2s ease;
+  }
+
+  /* Add hover effect to category items */
+  .infinite-scroll-content a:hover {
+    transform: translateY(-2px);
+    transition: transform 0.2s ease;
   }
 }
