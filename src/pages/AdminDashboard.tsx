@@ -85,7 +85,7 @@ const AdminDashboard = () => {
               <Store className="h-5 w-5" />
               Dashboard
             </button>
-            <button className="w-full flex items-center gap-3 px-4 py-2 hover:bg-accent rounded-lg">
+            <button onClick={() => navigate('/admin/stores')} className="w-full flex items-center gap-3 px-4 py-2 hover:bg-accent rounded-lg">
               <Store className="h-5 w-5" />
               Stores
             </button>
@@ -96,7 +96,7 @@ const AdminDashboard = () => {
               <Package className="h-5 w-5" />
               Seller Applications
             </button>
-            <button className="w-full flex items-center gap-3 px-4 py-2 hover:bg-accent rounded-lg">
+            <button onClick={() => navigate('/admin/coupons')} className="w-full flex items-center gap-3 px-4 py-2 hover:bg-accent rounded-lg">
               <ShoppingCart className="h-5 w-5" />
               Coupons
             </button>
