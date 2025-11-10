@@ -56,10 +56,18 @@ const AccountDialog: React.FC<Props> = ({ open, onOpenChange }) => {
 		if (!file || !user) return;
 		setUploading(true);
 		try {
-			// Basic validation
+			// Basic validation (also mirror backend RLS checks)
 			if (!file.type.startsWith('image/')) throw new Error('Please select an image file');
-			const fileExt = file.name.split('.').pop();
-			const filePath = `avatars/${user.id}/${Date.now()}.${fileExt}`;
+			const fileExt = (file.name.split('.').pop() || '').toLowerCase();
+			const allowedExt = ['png', 'jpg', 'jpeg', 'gif', 'webp'];
+			if (!allowedExt.includes(fileExt)) throw new Error('Unsupported image format');
+			// Enforce 2MB limit client-side to match DB policy (octet_length < 2097152)
+			if (file.size >= 2097152) throw new Error('File too large. Max 2MB');
+			// When uploading to a bucket via storage.from('avatars'), the object name
+			// should NOT include the bucket name as a prefix. The server policy
+			// checks the first folder segment of the object name equals auth.uid(),
+			// so we set the path as `<user.id>/...` (not `avatars/<user.id>/...`).
+			const filePath = `${user.id}/${Date.now()}.${fileExt}`;
 
 			// Upload to Supabase Storage (bucket: 'avatars'). Make sure the bucket exists in your Supabase project.
 			const storage = (supabase as any).storage;
@@ -100,10 +108,12 @@ const AccountDialog: React.FC<Props> = ({ open, onOpenChange }) => {
 			const storage = (supabase as any).storage;
 			const urlPath = avatarUrl;
 			if (urlPath.includes('/avatars/')) {
-				// extract path after bucket domain
+				// public URL includes the bucket segment; extract the path after /avatars/
 				const parts = urlPath.split('/avatars/');
 				if (parts[1]) {
-					const path = `avatars/${parts[1]}`;
+					// The storage API expects object path relative to the bucket
+					// (we upload as `<userId>/<filename>`), so pass parts[1] directly.
+					const path = parts[1];
 					await storage.from('avatars').remove([path]);
 				}
 			}
