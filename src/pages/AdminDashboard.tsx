@@ -89,9 +89,12 @@ const AdminDashboard = () => {
               <Store className="h-5 w-5" />
               Stores
             </button>
-            <button className="w-full flex items-center gap-3 px-4 py-2 hover:bg-accent rounded-lg">
+            <button 
+              onClick={() => navigate('/admin/seller-applications')}
+              className="w-full flex items-center gap-3 px-4 py-2 hover:bg-accent rounded-lg"
+            >
               <Package className="h-5 w-5" />
-              Approve Store
+              Seller Applications
             </button>
             <button className="w-full flex items-center gap-3 px-4 py-2 hover:bg-accent rounded-lg">
               <ShoppingCart className="h-5 w-5" />

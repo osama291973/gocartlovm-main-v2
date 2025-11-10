@@ -17,6 +17,7 @@ import SellerDashboard from "./pages/SellerDashboard";
 import CreateStore from "./pages/CreateStore";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminTranslations from "./pages/AdminTranslations";
+import AdminSellerApplications from "./pages/AdminSellerApplications";
 import NotFound from "./pages/NotFound";
 import SupabaseDebug from "./pages/SupabaseDebug";
 
@@ -44,6 +45,7 @@ const App = () => (
               <Route path="/seller" element={<SellerDashboard />} />
               <Route path="/admin" element={<AdminDashboard />} />
               <Route path="/admin/translations" element={<AdminTranslations />} />
+              <Route path="/admin/seller-applications" element={<AdminSellerApplications />} />
               <Route path="/supabase-debug" element={<SupabaseDebug />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
