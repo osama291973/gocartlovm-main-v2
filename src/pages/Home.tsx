@@ -185,29 +185,29 @@ const Home = () => {
         <section className="lg:col-span-8 rounded-3xl bg-[hsl(var(--hero-mint))] p-8 md:p-12 relative overflow-hidden min-h-[500px] flex flex-col justify-between">
           <div>
             <div className="inline-flex items-center gap-2 bg-[hsl(var(--accent))] text-accent-foreground px-4 py-1.5 rounded-full text-xs font-medium mb-8">
-              <span className="font-bold">NEWS</span>
-              <span>Free Shipping on Orders Above $50!</span>
+              <span className="font-bold">{t('hero_news_tag')}</span>
+              <span>{t('hero_news_text')}</span>
             </div>
             
             <div className="max-w-md">
               <h1 className="text-4xl md:text-5xl font-bold mb-2">
-                Gadgets <span className="text-primary">you'll love.</span>
+                {t('hero_title_line1')}
               </h1>
               <h2 className="text-4xl md:text-5xl font-bold mb-8">
-                Prices you'll trust.
+                {t('hero_title_line2')}
               </h2>
             </div>
           </div>
 
           <div>
-            <p className="text-sm text-muted-foreground mb-2">Starts from</p>
+            <p className="text-sm text-muted-foreground mb-2">{t('hero_starts_from_label')}</p>
             <p className="text-4xl font-bold mb-6">$4.90</p>
             
             <Button 
               size="lg" 
               className="bg-foreground text-background hover:bg-foreground/90 rounded-lg"
             >
-              LEARN MORE
+              {t('hero_cta')}
             </Button>
           </div>
         </section>
@@ -216,11 +216,11 @@ const Home = () => {
           <Link to="/shop" className="block h-full">
             <div className="rounded-3xl bg-[hsl(var(--hero-peach))] p-8 h-full hover:scale-[1.02] transition-transform flex flex-col justify-between">
               <div>
-                <h3 className="text-2xl font-bold">Best products</h3>
-                <p className="text-sm text-muted-foreground mt-2">Find the perfect gadget</p>
+                <h3 className="text-2xl font-bold">{t('hero_card_best_products_title')}</h3>
+                <p className="text-sm text-muted-foreground mt-2">{t('hero_card_best_products_desc')}</p>
               </div>
               <p className="text-sm font-medium flex items-center gap-2 mt-4">
-                View more <ArrowRight className="h-4 w-4" />
+                {t('hero_card_view_more')} <ArrowRight className="h-4 w-4" />
               </p>
             </div>
           </Link>
@@ -228,11 +228,11 @@ const Home = () => {
           <Link to="/shop" className="block h-full">
             <div className="rounded-3xl bg-[hsl(var(--hero-blue))] p-8 h-full hover:scale-[1.02] transition-transform flex flex-col justify-between">
               <div>
-                <h3 className="text-2xl font-bold">20% discounts</h3>
-                <p className="text-sm text-muted-foreground mt-2">Limited time offers</p>
+                <h3 className="text-2xl font-bold">{t('hero_card_discounts_title')}</h3>
+                <p className="text-sm text-muted-foreground mt-2">{t('hero_card_discounts_desc')}</p>
               </div>
               <p className="text-sm font-medium flex items-center gap-2 mt-4">
-                View more <ArrowRight className="h-4 w-4" />
+                {t('hero_card_view_more')} <ArrowRight className="h-4 w-4" />
               </p>
             </div>
           </Link>
