@@ -21,9 +21,6 @@ interface SellerApplication {
       language_code: string;
     }[];
   };
-  user: {
-    email: string;
-  };
 }
 
 const AdminSellerApplications = () => {
@@ -52,10 +49,7 @@ const AdminSellerApplications = () => {
               description,
               language_code
             )
-          ),
-          user:users (
-            email
-          )
+            )
         `)
         .eq('status', 'pending')
         .order('created_at', { ascending: false });
@@ -68,12 +62,18 @@ const AdminSellerApplications = () => {
 
   const handleApprove = async (application: SellerApplication) => {
     try {
-      // Update application status and user role in a transaction via RPC
-      const { error } = await supabase.rpc('approve_seller_application', {
-        application_id: application.id
-      });
+      // Try RPC using common parameter names. Some DBs expose the function
+      // as approve_seller_application(application_id uuid) while others use
+      // approve_seller_application(target_user_id uuid). Attempt both to be
+      // resilient to migrations applied in different orders.
+      let res: any;
+      res = await (supabase as any).rpc('approve_seller_application', { application_id: application.id });
+      if (res?.error) {
+        // If function not found or param mismatch, try alternative param
+        res = await (supabase as any).rpc('approve_seller_application', { target_user_id: application.user_id });
+      }
 
-      if (error) throw error;
+      if (res?.error) throw res.error;
 
       toast({
         title: 'Application Approved',
@@ -94,11 +94,14 @@ const AdminSellerApplications = () => {
 
   const handleReject = async (application: SellerApplication) => {
     try {
-      const { error } = await supabase.rpc('reject_seller_application', {
-        application_id: application.id
-      });
+      // Try both parameter names as with approve
+      let res: any;
+      res = await (supabase as any).rpc('reject_seller_application', { application_id: application.id });
+      if (res?.error) {
+        res = await (supabase as any).rpc('reject_seller_application', { target_user_id: application.user_id });
+      }
 
-      if (error) throw error;
+      if (res?.error) throw res.error;
 
       toast({
         title: 'Application Rejected',
@@ -144,7 +147,7 @@ const AdminSellerApplications = () => {
                       {englishTranslation?.name || arabicTranslation?.name}
                     </h3>
                     <p className="text-sm text-muted-foreground mb-4">
-                      Submitted by: {application.user.email}
+                      Submitted by: {application.user_id}
                     </p>
                     
                     <div className="space-y-2">
