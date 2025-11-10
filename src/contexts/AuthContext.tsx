@@ -2,8 +2,12 @@ import { createContext, useContext, useEffect, useState, ReactNode } from 'react
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import type { Database } from '@/types/supabase';
 
-type UserRole = 'user' | 'seller' | 'seller_pending' | 'seller_approved' | 'admin';
+// Use the generated Supabase enum for roles so frontend stays in sync with
+// backend migrations. If you extend roles in the DB, regenerate types and
+// this will automatically reflect new values.
+type UserRole = Database['public']['Enums']['app_role'];
 
 interface AuthContextType {
   user: User | null;

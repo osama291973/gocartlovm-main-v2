@@ -1,0 +1,2525 @@
+Table Definitions:
+[
+  {
+    "data_type": "uuid",
+    "table_name": "addresses",
+    "column_name": "id",
+    "is_nullable": "NO",
+    "column_default": "gen_random_uuid()"
+  },
+  {
+    "data_type": "uuid",
+    "table_name": "addresses",
+    "column_name": "user_id",
+    "is_nullable": "NO",
+    "column_default": null
+  },
+  {
+    "data_type": "text",
+    "table_name": "addresses",
+    "column_name": "title",
+    "is_nullable": "NO",
+    "column_default": null
+  },
+  {
+    "data_type": "text",
+    "table_name": "addresses",
+    "column_name": "street",
+    "is_nullable": "NO",
+    "column_default": null
+  },
+  {
+    "data_type": "text",
+    "table_name": "addresses",
+    "column_name": "city",
+    "is_nullable": "NO",
+    "column_default": null
+  },
+  {
+    "data_type": "text",
+    "table_name": "addresses",
+    "column_name": "state",
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "data_type": "text",
+    "table_name": "addresses",
+    "column_name": "postal_code",
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "data_type": "text",
+    "table_name": "addresses",
+    "column_name": "country",
+    "is_nullable": "NO",
+    "column_default": null
+  },
+  {
+    "data_type": "boolean",
+    "table_name": "addresses",
+    "column_name": "is_default",
+    "is_nullable": "YES",
+    "column_default": "false"
+  },
+  {
+    "data_type": "timestamp with time zone",
+    "table_name": "addresses",
+    "column_name": "created_at",
+    "is_nullable": "NO",
+    "column_default": "now()"
+  },
+  {
+    "data_type": "timestamp with time zone",
+    "table_name": "addresses",
+    "column_name": "updated_at",
+    "is_nullable": "NO",
+    "column_default": "now()"
+  },
+  {
+    "data_type": "uuid",
+    "table_name": "cart_items",
+    "column_name": "id",
+    "is_nullable": "NO",
+    "column_default": "gen_random_uuid()"
+  },
+  {
+    "data_type": "uuid",
+    "table_name": "cart_items",
+    "column_name": "user_id",
+    "is_nullable": "NO",
+    "column_default": null
+  },
+  {
+    "data_type": "uuid",
+    "table_name": "cart_items",
+    "column_name": "product_id",
+    "is_nullable": "NO",
+    "column_default": null
+  },
+  {
+    "data_type": "integer",
+    "table_name": "cart_items",
+    "column_name": "quantity",
+    "is_nullable": "NO",
+    "column_default": "1"
+  },
+  {
+    "data_type": "timestamp with time zone",
+    "table_name": "cart_items",
+    "column_name": "created_at",
+    "is_nullable": "NO",
+    "column_default": "now()"
+  },
+  {
+    "data_type": "timestamp with time zone",
+    "table_name": "cart_items",
+    "column_name": "updated_at",
+    "is_nullable": "NO",
+    "column_default": "now()"
+  },
+  {
+    "data_type": "uuid",
+    "table_name": "categories",
+    "column_name": "id",
+    "is_nullable": "NO",
+    "column_default": "gen_random_uuid()"
+  },
+  {
+    "data_type": "text",
+    "table_name": "categories",
+    "column_name": "slug",
+    "is_nullable": "NO",
+    "column_default": null
+  },
+  {
+    "data_type": "text",
+    "table_name": "categories",
+    "column_name": "icon",
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "data_type": "text",
+    "table_name": "categories",
+    "column_name": "image_url",
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "data_type": "timestamp with time zone",
+    "table_name": "categories",
+    "column_name": "created_at",
+    "is_nullable": "NO",
+    "column_default": "now()"
+  },
+  {
+    "data_type": "timestamp with time zone",
+    "table_name": "categories",
+    "column_name": "updated_at",
+    "is_nullable": "NO",
+    "column_default": "now()"
+  },
+  {
+    "data_type": "uuid",
+    "table_name": "category_translations",
+    "column_name": "id",
+    "is_nullable": "NO",
+    "column_default": "gen_random_uuid()"
+  },
+  {
+    "data_type": "uuid",
+    "table_name": "category_translations",
+    "column_name": "category_id",
+    "is_nullable": "NO",
+    "column_default": null
+  },
+  {
+    "data_type": "USER-DEFINED",
+    "table_name": "category_translations",
+    "column_name": "language_code",
+    "is_nullable": "NO",
+    "column_default": null
+  },
+  {
+    "data_type": "text",
+    "table_name": "category_translations",
+    "column_name": "name",
+    "is_nullable": "NO",
+    "column_default": null
+  },
+  {
+    "data_type": "text",
+    "table_name": "category_translations",
+    "column_name": "description",
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "data_type": "boolean",
+    "table_name": "category_translations",
+    "column_name": "is_machine_translated",
+    "is_nullable": "YES",
+    "column_default": "false"
+  },
+  {
+    "data_type": "uuid",
+    "table_name": "coupons",
+    "column_name": "id",
+    "is_nullable": "NO",
+    "column_default": "gen_random_uuid()"
+  },
+  {
+    "data_type": "text",
+    "table_name": "coupons",
+    "column_name": "code",
+    "is_nullable": "NO",
+    "column_default": null
+  },
+  {
+    "data_type": "text",
+    "table_name": "coupons",
+    "column_name": "discount_type",
+    "is_nullable": "NO",
+    "column_default": null
+  },
+  {
+    "data_type": "numeric",
+    "table_name": "coupons",
+    "column_name": "discount_value",
+    "is_nullable": "NO",
+    "column_default": null
+  },
+  {
+    "data_type": "numeric",
+    "table_name": "coupons",
+    "column_name": "min_purchase",
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "data_type": "numeric",
+    "table_name": "coupons",
+    "column_name": "max_discount",
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "data_type": "timestamp with time zone",
+    "table_name": "coupons",
+    "column_name": "expire_at",
+    "is_nullable": "NO",
+    "column_default": null
+  },
+  {
+    "data_type": "boolean",
+    "table_name": "coupons",
+    "column_name": "is_active",
+    "is_nullable": "YES",
+    "column_default": "true"
+  },
+  {
+    "data_type": "integer",
+    "table_name": "coupons",
+    "column_name": "usage_limit",
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "data_type": "integer",
+    "table_name": "coupons",
+    "column_name": "usage_count",
+    "is_nullable": "YES",
+    "column_default": "0"
+  },
+  {
+    "data_type": "timestamp with time zone",
+    "table_name": "coupons",
+    "column_name": "created_at",
+    "is_nullable": "NO",
+    "column_default": "now()"
+  },
+  {
+    "data_type": "uuid",
+    "table_name": "order_items",
+    "column_name": "id",
+    "is_nullable": "NO",
+    "column_default": "gen_random_uuid()"
+  },
+  {
+    "data_type": "uuid",
+    "table_name": "order_items",
+    "column_name": "order_id",
+    "is_nullable": "NO",
+    "column_default": null
+  },
+  {
+    "data_type": "uuid",
+    "table_name": "order_items",
+    "column_name": "product_id",
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "data_type": "uuid",
+    "table_name": "order_items",
+    "column_name": "store_id",
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "data_type": "integer",
+    "table_name": "order_items",
+    "column_name": "quantity",
+    "is_nullable": "NO",
+    "column_default": null
+  },
+  {
+    "data_type": "numeric",
+    "table_name": "order_items",
+    "column_name": "price",
+    "is_nullable": "NO",
+    "column_default": null
+  },
+  {
+    "data_type": "numeric",
+    "table_name": "order_items",
+    "column_name": "total",
+    "is_nullable": "NO",
+    "column_default": null
+  },
+  {
+    "data_type": "text",
+    "table_name": "order_items",
+    "column_name": "product_name",
+    "is_nullable": "NO",
+    "column_default": null
+  },
+  {
+    "data_type": "text",
+    "table_name": "order_items",
+    "column_name": "product_image",
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "data_type": "uuid",
+    "table_name": "orders",
+    "column_name": "id",
+    "is_nullable": "NO",
+    "column_default": "gen_random_uuid()"
+  },
+  {
+    "data_type": "uuid",
+    "table_name": "orders",
+    "column_name": "user_id",
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "data_type": "uuid",
+    "table_name": "orders",
+    "column_name": "address_id",
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "data_type": "uuid",
+    "table_name": "orders",
+    "column_name": "coupon_id",
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "data_type": "numeric",
+    "table_name": "orders",
+    "column_name": "subtotal",
+    "is_nullable": "NO",
+    "column_default": null
+  },
+  {
+    "data_type": "numeric",
+    "table_name": "orders",
+    "column_name": "discount",
+    "is_nullable": "YES",
+    "column_default": "0"
+  },
+  {
+    "data_type": "numeric",
+    "table_name": "orders",
+    "column_name": "shipping",
+    "is_nullable": "YES",
+    "column_default": "0"
+  },
+  {
+    "data_type": "numeric",
+    "table_name": "orders",
+    "column_name": "total",
+    "is_nullable": "NO",
+    "column_default": null
+  },
+  {
+    "data_type": "text",
+    "table_name": "orders",
+    "column_name": "payment_method",
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "data_type": "text",
+    "table_name": "orders",
+    "column_name": "notes",
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "data_type": "timestamp with time zone",
+    "table_name": "orders",
+    "column_name": "created_at",
+    "is_nullable": "NO",
+    "column_default": "now()"
+  },
+  {
+    "data_type": "timestamp with time zone",
+    "table_name": "orders",
+    "column_name": "updated_at",
+    "is_nullable": "NO",
+    "column_default": "now()"
+  },
+  {
+    "data_type": "USER-DEFINED",
+    "table_name": "orders",
+    "column_name": "status",
+    "is_nullable": "NO",
+    "column_default": "'pending'::order_status_enum"
+  },
+  {
+    "data_type": "USER-DEFINED",
+    "table_name": "orders",
+    "column_name": "payment_status",
+    "is_nullable": "NO",
+    "column_default": "'pending'::payment_status_enum"
+  },
+  {
+    "data_type": "uuid",
+    "table_name": "product_attribute_translations",
+    "column_name": "id",
+    "is_nullable": "NO",
+    "column_default": "gen_random_uuid()"
+  },
+  {
+    "data_type": "uuid",
+    "table_name": "product_attribute_translations",
+    "column_name": "attribute_id",
+    "is_nullable": "NO",
+    "column_default": null
+  },
+  {
+    "data_type": "USER-DEFINED",
+    "table_name": "product_attribute_translations",
+    "column_name": "language_code",
+    "is_nullable": "NO",
+    "column_default": null
+  },
+  {
+    "data_type": "text",
+    "table_name": "product_attribute_translations",
+    "column_name": "name",
+    "is_nullable": "NO",
+    "column_default": null
+  },
+  {
+    "data_type": "uuid",
+    "table_name": "product_attribute_value_translations",
+    "column_name": "id",
+    "is_nullable": "NO",
+    "column_default": "gen_random_uuid()"
+  },
+  {
+    "data_type": "uuid",
+    "table_name": "product_attribute_value_translations",
+    "column_name": "value_id",
+    "is_nullable": "NO",
+    "column_default": null
+  },
+  {
+    "data_type": "USER-DEFINED",
+    "table_name": "product_attribute_value_translations",
+    "column_name": "language_code",
+    "is_nullable": "NO",
+    "column_default": null
+  },
+  {
+    "data_type": "text",
+    "table_name": "product_attribute_value_translations",
+    "column_name": "value",
+    "is_nullable": "NO",
+    "column_default": null
+  },
+  {
+    "data_type": "uuid",
+    "table_name": "product_attribute_values",
+    "column_name": "id",
+    "is_nullable": "NO",
+    "column_default": "gen_random_uuid()"
+  },
+  {
+    "data_type": "uuid",
+    "table_name": "product_attribute_values",
+    "column_name": "attribute_id",
+    "is_nullable": "NO",
+    "column_default": null
+  },
+  {
+    "data_type": "text",
+    "table_name": "product_attribute_values",
+    "column_name": "value",
+    "is_nullable": "NO",
+    "column_default": null
+  },
+  {
+    "data_type": "timestamp with time zone",
+    "table_name": "product_attribute_values",
+    "column_name": "created_at",
+    "is_nullable": "NO",
+    "column_default": "now()"
+  },
+  {
+    "data_type": "uuid",
+    "table_name": "product_attributes",
+    "column_name": "id",
+    "is_nullable": "NO",
+    "column_default": "gen_random_uuid()"
+  },
+  {
+    "data_type": "text",
+    "table_name": "product_attributes",
+    "column_name": "name",
+    "is_nullable": "NO",
+    "column_default": null
+  },
+  {
+    "data_type": "text",
+    "table_name": "product_attributes",
+    "column_name": "type",
+    "is_nullable": "NO",
+    "column_default": null
+  },
+  {
+    "data_type": "timestamp with time zone",
+    "table_name": "product_attributes",
+    "column_name": "created_at",
+    "is_nullable": "NO",
+    "column_default": "now()"
+  },
+  {
+    "data_type": "timestamp with time zone",
+    "table_name": "product_attributes",
+    "column_name": "updated_at",
+    "is_nullable": "NO",
+    "column_default": "now()"
+  },
+  {
+    "data_type": "uuid",
+    "table_name": "product_translations",
+    "column_name": "id",
+    "is_nullable": "NO",
+    "column_default": "gen_random_uuid()"
+  },
+  {
+    "data_type": "uuid",
+    "table_name": "product_translations",
+    "column_name": "product_id",
+    "is_nullable": "NO",
+    "column_default": null
+  },
+  {
+    "data_type": "USER-DEFINED",
+    "table_name": "product_translations",
+    "column_name": "language_code",
+    "is_nullable": "NO",
+    "column_default": null
+  },
+  {
+    "data_type": "text",
+    "table_name": "product_translations",
+    "column_name": "name",
+    "is_nullable": "NO",
+    "column_default": null
+  },
+  {
+    "data_type": "text",
+    "table_name": "product_translations",
+    "column_name": "description",
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "data_type": "boolean",
+    "table_name": "product_translations",
+    "column_name": "is_machine_translated",
+    "is_nullable": "YES",
+    "column_default": "false"
+  },
+  {
+    "data_type": "uuid",
+    "table_name": "product_variant_attributes",
+    "column_name": "id",
+    "is_nullable": "NO",
+    "column_default": "gen_random_uuid()"
+  },
+  {
+    "data_type": "uuid",
+    "table_name": "product_variant_attributes",
+    "column_name": "variant_id",
+    "is_nullable": "NO",
+    "column_default": null
+  },
+  {
+    "data_type": "uuid",
+    "table_name": "product_variant_attributes",
+    "column_name": "attribute_id",
+    "is_nullable": "NO",
+    "column_default": null
+  },
+  {
+    "data_type": "text",
+    "table_name": "product_variant_attributes",
+    "column_name": "value",
+    "is_nullable": "NO",
+    "column_default": null
+  },
+  {
+    "data_type": "timestamp with time zone",
+    "table_name": "product_variant_attributes",
+    "column_name": "created_at",
+    "is_nullable": "NO",
+    "column_default": "now()"
+  },
+  {
+    "data_type": "uuid",
+    "table_name": "product_variants",
+    "column_name": "id",
+    "is_nullable": "NO",
+    "column_default": "gen_random_uuid()"
+  },
+  {
+    "data_type": "uuid",
+    "table_name": "product_variants",
+    "column_name": "product_id",
+    "is_nullable": "NO",
+    "column_default": null
+  },
+  {
+    "data_type": "text",
+    "table_name": "product_variants",
+    "column_name": "sku",
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "data_type": "numeric",
+    "table_name": "product_variants",
+    "column_name": "price",
+    "is_nullable": "NO",
+    "column_default": null
+  },
+  {
+    "data_type": "numeric",
+    "table_name": "product_variants",
+    "column_name": "original_price",
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "data_type": "integer",
+    "table_name": "product_variants",
+    "column_name": "stock",
+    "is_nullable": "NO",
+    "column_default": "0"
+  },
+  {
+    "data_type": "text",
+    "table_name": "product_variants",
+    "column_name": "image_url",
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "data_type": "timestamp with time zone",
+    "table_name": "product_variants",
+    "column_name": "created_at",
+    "is_nullable": "NO",
+    "column_default": "now()"
+  },
+  {
+    "data_type": "timestamp with time zone",
+    "table_name": "product_variants",
+    "column_name": "updated_at",
+    "is_nullable": "NO",
+    "column_default": "now()"
+  },
+  {
+    "data_type": "uuid",
+    "table_name": "products",
+    "column_name": "id",
+    "is_nullable": "NO",
+    "column_default": "gen_random_uuid()"
+  },
+  {
+    "data_type": "uuid",
+    "table_name": "products",
+    "column_name": "store_id",
+    "is_nullable": "NO",
+    "column_default": null
+  },
+  {
+    "data_type": "uuid",
+    "table_name": "products",
+    "column_name": "category_id",
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "data_type": "text",
+    "table_name": "products",
+    "column_name": "slug",
+    "is_nullable": "NO",
+    "column_default": null
+  },
+  {
+    "data_type": "numeric",
+    "table_name": "products",
+    "column_name": "price",
+    "is_nullable": "NO",
+    "column_default": null
+  },
+  {
+    "data_type": "numeric",
+    "table_name": "products",
+    "column_name": "original_price",
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "data_type": "integer",
+    "table_name": "products",
+    "column_name": "stock",
+    "is_nullable": "NO",
+    "column_default": "0"
+  },
+  {
+    "data_type": "text",
+    "table_name": "products",
+    "column_name": "image_url",
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "data_type": "ARRAY",
+    "table_name": "products",
+    "column_name": "gallery_urls",
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "data_type": "numeric",
+    "table_name": "products",
+    "column_name": "rating",
+    "is_nullable": "YES",
+    "column_default": "0"
+  },
+  {
+    "data_type": "integer",
+    "table_name": "products",
+    "column_name": "reviews_count",
+    "is_nullable": "YES",
+    "column_default": "0"
+  },
+  {
+    "data_type": "boolean",
+    "table_name": "products",
+    "column_name": "is_featured",
+    "is_nullable": "YES",
+    "column_default": "false"
+  },
+  {
+    "data_type": "timestamp with time zone",
+    "table_name": "products",
+    "column_name": "created_at",
+    "is_nullable": "NO",
+    "column_default": "now()"
+  },
+  {
+    "data_type": "timestamp with time zone",
+    "table_name": "products",
+    "column_name": "updated_at",
+    "is_nullable": "NO",
+    "column_default": "now()"
+  },
+  {
+    "data_type": "boolean",
+    "table_name": "products",
+    "column_name": "has_variants",
+    "is_nullable": "YES",
+    "column_default": "false"
+  },
+  {
+    "data_type": "numeric",
+    "table_name": "products",
+    "column_name": "base_price",
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "data_type": "uuid",
+    "table_name": "profiles",
+    "column_name": "id",
+    "is_nullable": "NO",
+    "column_default": null
+  },
+  {
+    "data_type": "text",
+    "table_name": "profiles",
+    "column_name": "full_name",
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "data_type": "text",
+    "table_name": "profiles",
+    "column_name": "avatar_url",
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "data_type": "timestamp with time zone",
+    "table_name": "profiles",
+    "column_name": "created_at",
+    "is_nullable": "NO",
+    "column_default": "now()"
+  },
+  {
+    "data_type": "timestamp with time zone",
+    "table_name": "profiles",
+    "column_name": "updated_at",
+    "is_nullable": "NO",
+    "column_default": "now()"
+  },
+  {
+    "data_type": "uuid",
+    "table_name": "reviews",
+    "column_name": "id",
+    "is_nullable": "NO",
+    "column_default": "gen_random_uuid()"
+  },
+  {
+    "data_type": "uuid",
+    "table_name": "reviews",
+    "column_name": "product_id",
+    "is_nullable": "NO",
+    "column_default": null
+  },
+  {
+    "data_type": "uuid",
+    "table_name": "reviews",
+    "column_name": "user_id",
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "data_type": "integer",
+    "table_name": "reviews",
+    "column_name": "rating",
+    "is_nullable": "NO",
+    "column_default": null
+  },
+  {
+    "data_type": "text",
+    "table_name": "reviews",
+    "column_name": "comment",
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "data_type": "timestamp with time zone",
+    "table_name": "reviews",
+    "column_name": "created_at",
+    "is_nullable": "NO",
+    "column_default": "now()"
+  },
+  {
+    "data_type": "uuid",
+    "table_name": "seller_applications",
+    "column_name": "id",
+    "is_nullable": "NO",
+    "column_default": "gen_random_uuid()"
+  },
+  {
+    "data_type": "uuid",
+    "table_name": "seller_applications",
+    "column_name": "user_id",
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "data_type": "uuid",
+    "table_name": "seller_applications",
+    "column_name": "store_id",
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "data_type": "text",
+    "table_name": "seller_applications",
+    "column_name": "status",
+    "is_nullable": "YES",
+    "column_default": "'pending'::text"
+  },
+  {
+    "data_type": "timestamp with time zone",
+    "table_name": "seller_applications",
+    "column_name": "created_at",
+    "is_nullable": "YES",
+    "column_default": "now()"
+  },
+  {
+    "data_type": "timestamp with time zone",
+    "table_name": "seller_applications",
+    "column_name": "updated_at",
+    "is_nullable": "YES",
+    "column_default": "now()"
+  },
+  {
+    "data_type": "uuid",
+    "table_name": "site_texts",
+    "column_name": "id",
+    "is_nullable": "NO",
+    "column_default": "gen_random_uuid()"
+  },
+  {
+    "data_type": "text",
+    "table_name": "site_texts",
+    "column_name": "key",
+    "is_nullable": "NO",
+    "column_default": null
+  },
+  {
+    "data_type": "text",
+    "table_name": "site_texts",
+    "column_name": "language_code",
+    "is_nullable": "NO",
+    "column_default": null
+  },
+  {
+    "data_type": "text",
+    "table_name": "site_texts",
+    "column_name": "value",
+    "is_nullable": "NO",
+    "column_default": null
+  },
+  {
+    "data_type": "timestamp with time zone",
+    "table_name": "site_texts",
+    "column_name": "created_at",
+    "is_nullable": "NO",
+    "column_default": "now()"
+  },
+  {
+    "data_type": "timestamp with time zone",
+    "table_name": "site_texts",
+    "column_name": "updated_at",
+    "is_nullable": "NO",
+    "column_default": "now()"
+  },
+  {
+    "data_type": "text",
+    "table_name": "site_texts",
+    "column_name": "namespace",
+    "is_nullable": "YES",
+    "column_default": "'site'::text"
+  },
+  {
+    "data_type": "text",
+    "table_name": "site_texts",
+    "column_name": "type",
+    "is_nullable": "YES",
+    "column_default": "'text'::text"
+  },
+  {
+    "data_type": "text",
+    "table_name": "site_texts",
+    "column_name": "context",
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "data_type": "uuid",
+    "table_name": "site_texts",
+    "column_name": "author",
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "data_type": "integer",
+    "table_name": "site_texts",
+    "column_name": "version",
+    "is_nullable": "YES",
+    "column_default": "1"
+  },
+  {
+    "data_type": "uuid",
+    "table_name": "store_translations",
+    "column_name": "id",
+    "is_nullable": "NO",
+    "column_default": "gen_random_uuid()"
+  },
+  {
+    "data_type": "uuid",
+    "table_name": "store_translations",
+    "column_name": "store_id",
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "data_type": "text",
+    "table_name": "store_translations",
+    "column_name": "language_code",
+    "is_nullable": "NO",
+    "column_default": null
+  },
+  {
+    "data_type": "text",
+    "table_name": "store_translations",
+    "column_name": "name",
+    "is_nullable": "NO",
+    "column_default": null
+  },
+  {
+    "data_type": "text",
+    "table_name": "store_translations",
+    "column_name": "description",
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "data_type": "timestamp with time zone",
+    "table_name": "store_translations",
+    "column_name": "created_at",
+    "is_nullable": "YES",
+    "column_default": "now()"
+  },
+  {
+    "data_type": "timestamp with time zone",
+    "table_name": "store_translations",
+    "column_name": "updated_at",
+    "is_nullable": "YES",
+    "column_default": "now()"
+  },
+  {
+    "data_type": "uuid",
+    "table_name": "stores",
+    "column_name": "id",
+    "is_nullable": "NO",
+    "column_default": "gen_random_uuid()"
+  },
+  {
+    "data_type": "text",
+    "table_name": "stores",
+    "column_name": "slug",
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "data_type": "uuid",
+    "table_name": "stores",
+    "column_name": "owner_id",
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "data_type": "text",
+    "table_name": "stores",
+    "column_name": "logo_url",
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "data_type": "text",
+    "table_name": "stores",
+    "column_name": "cover_url",
+    "is_nullable": "YES",
+    "column_default": null
+  },
+  {
+    "data_type": "numeric",
+    "table_name": "stores",
+    "column_name": "rating",
+    "is_nullable": "YES",
+    "column_default": "0"
+  },
+  {
+    "data_type": "integer",
+    "table_name": "stores",
+    "column_name": "total_products",
+    "is_nullable": "YES",
+    "column_default": "0"
+  },
+  {
+    "data_type": "USER-DEFINED",
+    "table_name": "stores",
+    "column_name": "status",
+    "is_nullable": "YES",
+    "column_default": "'pending'::store_status"
+  },
+  {
+    "data_type": "timestamp with time zone",
+    "table_name": "stores",
+    "column_name": "created_at",
+    "is_nullable": "YES",
+    "column_default": "now()"
+  },
+  {
+    "data_type": "timestamp with time zone",
+    "table_name": "stores",
+    "column_name": "updated_at",
+    "is_nullable": "YES",
+    "column_default": "now()"
+  },
+  {
+    "data_type": "uuid",
+    "table_name": "user_roles",
+    "column_name": "id",
+    "is_nullable": "NO",
+    "column_default": "gen_random_uuid()"
+  },
+  {
+    "data_type": "uuid",
+    "table_name": "user_roles",
+    "column_name": "user_id",
+    "is_nullable": "NO",
+    "column_default": null
+  },
+  {
+    "data_type": "USER-DEFINED",
+    "table_name": "user_roles",
+    "column_name": "role",
+    "is_nullable": "NO",
+    "column_default": null
+  },
+  {
+    "data_type": "timestamp with time zone",
+    "table_name": "user_roles",
+    "column_name": "created_at",
+    "is_nullable": "NO",
+    "column_default": "now()"
+  }
+]
+
+Table Constraints:
+[
+  {
+    "table_name": "addresses",
+    "constraint_name": "addresses_pkey",
+    "constraint_type": "PRIMARY KEY"
+  },
+  {
+    "table_name": "addresses",
+    "constraint_name": "2200_17584_5_not_null",
+    "constraint_type": "CHECK"
+  },
+  {
+    "table_name": "addresses",
+    "constraint_name": "2200_17584_4_not_null",
+    "constraint_type": "CHECK"
+  },
+  {
+    "table_name": "addresses",
+    "constraint_name": "2200_17584_3_not_null",
+    "constraint_type": "CHECK"
+  },
+  {
+    "table_name": "addresses",
+    "constraint_name": "2200_17584_8_not_null",
+    "constraint_type": "CHECK"
+  },
+  {
+    "table_name": "addresses",
+    "constraint_name": "2200_17584_10_not_null",
+    "constraint_type": "CHECK"
+  },
+  {
+    "table_name": "addresses",
+    "constraint_name": "2200_17584_11_not_null",
+    "constraint_type": "CHECK"
+  },
+  {
+    "table_name": "addresses",
+    "constraint_name": "2200_17584_2_not_null",
+    "constraint_type": "CHECK"
+  },
+  {
+    "table_name": "addresses",
+    "constraint_name": "addresses_user_id_fkey",
+    "constraint_type": "FOREIGN KEY"
+  },
+  {
+    "table_name": "addresses",
+    "constraint_name": "2200_17584_1_not_null",
+    "constraint_type": "CHECK"
+  },
+  {
+    "table_name": "cart_items",
+    "constraint_name": "2200_17668_6_not_null",
+    "constraint_type": "CHECK"
+  },
+  {
+    "table_name": "cart_items",
+    "constraint_name": "2200_17668_3_not_null",
+    "constraint_type": "CHECK"
+  },
+  {
+    "table_name": "cart_items",
+    "constraint_name": "cart_items_pkey",
+    "constraint_type": "PRIMARY KEY"
+  },
+  {
+    "table_name": "cart_items",
+    "constraint_name": "cart_items_product_id_fkey",
+    "constraint_type": "FOREIGN KEY"
+  },
+  {
+    "table_name": "cart_items",
+    "constraint_name": "cart_items_user_id_fkey",
+    "constraint_type": "FOREIGN KEY"
+  },
+  {
+    "table_name": "cart_items",
+    "constraint_name": "cart_items_user_id_product_id_key",
+    "constraint_type": "UNIQUE"
+  },
+  {
+    "table_name": "cart_items",
+    "constraint_name": "ci_product_id_fkey_cascade",
+    "constraint_type": "FOREIGN KEY"
+  },
+  {
+    "table_name": "cart_items",
+    "constraint_name": "2200_17668_4_not_null",
+    "constraint_type": "CHECK"
+  },
+  {
+    "table_name": "cart_items",
+    "constraint_name": "2200_17668_5_not_null",
+    "constraint_type": "CHECK"
+  },
+  {
+    "table_name": "cart_items",
+    "constraint_name": "2200_17668_2_not_null",
+    "constraint_type": "CHECK"
+  },
+  {
+    "table_name": "cart_items",
+    "constraint_name": "2200_17668_1_not_null",
+    "constraint_type": "CHECK"
+  },
+  {
+    "table_name": "categories",
+    "constraint_name": "2200_17467_1_not_null",
+    "constraint_type": "CHECK"
+  },
+  {
+    "table_name": "categories",
+    "constraint_name": "categories_pkey",
+    "constraint_type": "PRIMARY KEY"
+  },
+  {
+    "table_name": "categories",
+    "constraint_name": "categories_slug_key",
+    "constraint_type": "UNIQUE"
+  },
+  {
+    "table_name": "categories",
+    "constraint_name": "2200_17467_2_not_null",
+    "constraint_type": "CHECK"
+  },
+  {
+    "table_name": "categories",
+    "constraint_name": "2200_17467_5_not_null",
+    "constraint_type": "CHECK"
+  },
+  {
+    "table_name": "categories",
+    "constraint_name": "2200_17467_6_not_null",
+    "constraint_type": "CHECK"
+  },
+  {
+    "table_name": "category_translations",
+    "constraint_name": "2200_17479_3_not_null",
+    "constraint_type": "CHECK"
+  },
+  {
+    "table_name": "category_translations",
+    "constraint_name": "category_translations_category_id_fkey",
+    "constraint_type": "FOREIGN KEY"
+  },
+  {
+    "table_name": "category_translations",
+    "constraint_name": "category_translations_category_id_language_code_key",
+    "constraint_type": "UNIQUE"
+  },
+  {
+    "table_name": "category_translations",
+    "constraint_name": "category_translations_pkey",
+    "constraint_type": "PRIMARY KEY"
+  },
+  {
+    "table_name": "category_translations",
+    "constraint_name": "2200_17479_4_not_null",
+    "constraint_type": "CHECK"
+  },
+  {
+    "table_name": "category_translations",
+    "constraint_name": "2200_17479_1_not_null",
+    "constraint_type": "CHECK"
+  },
+  {
+    "table_name": "category_translations",
+    "constraint_name": "2200_17479_2_not_null",
+    "constraint_type": "CHECK"
+  },
+  {
+    "table_name": "coupons",
+    "constraint_name": "coupons_pkey",
+    "constraint_type": "PRIMARY KEY"
+  },
+  {
+    "table_name": "coupons",
+    "constraint_name": "2200_17600_11_not_null",
+    "constraint_type": "CHECK"
+  },
+  {
+    "table_name": "coupons",
+    "constraint_name": "coupons_code_key",
+    "constraint_type": "UNIQUE"
+  },
+  {
+    "table_name": "coupons",
+    "constraint_name": "2200_17600_7_not_null",
+    "constraint_type": "CHECK"
+  },
+  {
+    "table_name": "coupons",
+    "constraint_name": "2200_17600_4_not_null",
+    "constraint_type": "CHECK"
+  },
+  {
+    "table_name": "coupons",
+    "constraint_name": "2200_17600_3_not_null",
+    "constraint_type": "CHECK"
+  },
+  {
+    "table_name": "coupons",
+    "constraint_name": "2200_17600_2_not_null",
+    "constraint_type": "CHECK"
+  },
+  {
+    "table_name": "coupons",
+    "constraint_name": "2200_17600_1_not_null",
+    "constraint_type": "CHECK"
+  },
+  {
+    "table_name": "coupons",
+    "constraint_name": "coupons_discount_type_check",
+    "constraint_type": "CHECK"
+  },
+  {
+    "table_name": "order_items",
+    "constraint_name": "2200_17645_7_not_null",
+    "constraint_type": "CHECK"
+  },
+  {
+    "table_name": "order_items",
+    "constraint_name": "2200_17645_5_not_null",
+    "constraint_type": "CHECK"
+  },
+  {
+    "table_name": "order_items",
+    "constraint_name": "order_items_product_id_fkey",
+    "constraint_type": "FOREIGN KEY"
+  },
+  {
+    "table_name": "order_items",
+    "constraint_name": "order_items_pkey",
+    "constraint_type": "PRIMARY KEY"
+  },
+  {
+    "table_name": "order_items",
+    "constraint_name": "order_items_order_id_fkey",
+    "constraint_type": "FOREIGN KEY"
+  },
+  {
+    "table_name": "order_items",
+    "constraint_name": "oi_order_id_fkey_cascade",
+    "constraint_type": "FOREIGN KEY"
+  },
+  {
+    "table_name": "order_items",
+    "constraint_name": "2200_17645_2_not_null",
+    "constraint_type": "CHECK"
+  },
+  {
+    "table_name": "order_items",
+    "constraint_name": "2200_17645_6_not_null",
+    "constraint_type": "CHECK"
+  },
+  {
+    "table_name": "order_items",
+    "constraint_name": "2200_17645_8_not_null",
+    "constraint_type": "CHECK"
+  },
+  {
+    "table_name": "order_items",
+    "constraint_name": "2200_17645_1_not_null",
+    "constraint_type": "CHECK"
+  },
+  {
+    "table_name": "orders",
+    "constraint_name": "orders_pkey",
+    "constraint_type": "PRIMARY KEY"
+  },
+  {
+    "table_name": "orders",
+    "constraint_name": "orders_address_id_fkey",
+    "constraint_type": "FOREIGN KEY"
+  },
+  {
+    "table_name": "orders",
+    "constraint_name": "orders_user_id_fkey",
+    "constraint_type": "FOREIGN KEY"
+  },
+  {
+    "table_name": "orders",
+    "constraint_name": "2200_17614_14_not_null",
+    "constraint_type": "CHECK"
+  },
+  {
+    "table_name": "orders",
+    "constraint_name": "2200_17614_13_not_null",
+    "constraint_type": "CHECK"
+  },
+  {
+    "table_name": "orders",
+    "constraint_name": "2200_17614_9_not_null",
+    "constraint_type": "CHECK"
+  },
+  {
+    "table_name": "orders",
+    "constraint_name": "2200_17614_6_not_null",
+    "constraint_type": "CHECK"
+  },
+  {
+    "table_name": "orders",
+    "constraint_name": "2200_17614_16_not_null",
+    "constraint_type": "CHECK"
+  },
+  {
+    "table_name": "orders",
+    "constraint_name": "2200_17614_15_not_null",
+    "constraint_type": "CHECK"
+  },
+  {
+    "table_name": "orders",
+    "constraint_name": "2200_17614_1_not_null",
+    "constraint_type": "CHECK"
+  },
+  {
+    "table_name": "orders",
+    "constraint_name": "orders_coupon_id_fkey",
+    "constraint_type": "FOREIGN KEY"
+  },
+  {
+    "table_name": "product_attribute_translations",
+    "constraint_name": "2200_26711_4_not_null",
+    "constraint_type": "CHECK"
+  },
+  {
+    "table_name": "product_attribute_translations",
+    "constraint_name": "2200_26711_3_not_null",
+    "constraint_type": "CHECK"
+  },
+  {
+    "table_name": "product_attribute_translations",
+    "constraint_name": "2200_26711_2_not_null",
+    "constraint_type": "CHECK"
+  },
+  {
+    "table_name": "product_attribute_translations",
+    "constraint_name": "2200_26711_1_not_null",
+    "constraint_type": "CHECK"
+  },
+  {
+    "table_name": "product_attribute_translations",
+    "constraint_name": "pat_attribute_id_fkey_cascade",
+    "constraint_type": "FOREIGN KEY"
+  },
+  {
+    "table_name": "product_attribute_translations",
+    "constraint_name": "product_attribute_translations_attribute_id_fkey",
+    "constraint_type": "FOREIGN KEY"
+  },
+  {
+    "table_name": "product_attribute_translations",
+    "constraint_name": "product_attribute_translations_attribute_id_language_code_key",
+    "constraint_type": "UNIQUE"
+  },
+  {
+    "table_name": "product_attribute_translations",
+    "constraint_name": "product_attribute_translations_pkey",
+    "constraint_type": "PRIMARY KEY"
+  },
+  {
+    "table_name": "product_attribute_value_translations",
+    "constraint_name": "2200_26740_3_not_null",
+    "constraint_type": "CHECK"
+  },
+  {
+    "table_name": "product_attribute_value_translations",
+    "constraint_name": "2200_26740_2_not_null",
+    "constraint_type": "CHECK"
+  },
+  {
+    "table_name": "product_attribute_value_translations",
+    "constraint_name": "2200_26740_1_not_null",
+    "constraint_type": "CHECK"
+  },
+  {
+    "table_name": "product_attribute_value_translations",
+    "constraint_name": "product_attribute_value_translations_value_id_language_code_key",
+    "constraint_type": "UNIQUE"
+  },
+  {
+    "table_name": "product_attribute_value_translations",
+    "constraint_name": "product_attribute_value_translations_value_id_fkey",
+    "constraint_type": "FOREIGN KEY"
+  },
+  {
+    "table_name": "product_attribute_value_translations",
+    "constraint_name": "product_attribute_value_translations_pkey",
+    "constraint_type": "PRIMARY KEY"
+  },
+  {
+    "table_name": "product_attribute_value_translations",
+    "constraint_name": "pavt_value_id_fkey_cascade",
+    "constraint_type": "FOREIGN KEY"
+  },
+  {
+    "table_name": "product_attribute_value_translations",
+    "constraint_name": "2200_26740_4_not_null",
+    "constraint_type": "CHECK"
+  },
+  {
+    "table_name": "product_attribute_values",
+    "constraint_name": "2200_26726_3_not_null",
+    "constraint_type": "CHECK"
+  },
+  {
+    "table_name": "product_attribute_values",
+    "constraint_name": "product_attribute_values_pkey",
+    "constraint_type": "PRIMARY KEY"
+  },
+  {
+    "table_name": "product_attribute_values",
+    "constraint_name": "product_attribute_values_attribute_id_fkey",
+    "constraint_type": "FOREIGN KEY"
+  },
+  {
+    "table_name": "product_attribute_values",
+    "constraint_name": "pav_attribute_id_fkey_cascade",
+    "constraint_type": "FOREIGN KEY"
+  },
+  {
+    "table_name": "product_attribute_values",
+    "constraint_name": "2200_26726_1_not_null",
+    "constraint_type": "CHECK"
+  },
+  {
+    "table_name": "product_attribute_values",
+    "constraint_name": "2200_26726_2_not_null",
+    "constraint_type": "CHECK"
+  },
+  {
+    "table_name": "product_attribute_values",
+    "constraint_name": "2200_26726_4_not_null",
+    "constraint_type": "CHECK"
+  },
+  {
+    "table_name": "product_attributes",
+    "constraint_name": "product_attributes_type_check",
+    "constraint_type": "CHECK"
+  },
+  {
+    "table_name": "product_attributes",
+    "constraint_name": "product_attributes_pkey",
+    "constraint_type": "PRIMARY KEY"
+  },
+  {
+    "table_name": "product_attributes",
+    "constraint_name": "2200_26700_4_not_null",
+    "constraint_type": "CHECK"
+  },
+  {
+    "table_name": "product_attributes",
+    "constraint_name": "2200_26700_3_not_null",
+    "constraint_type": "CHECK"
+  },
+  {
+    "table_name": "product_attributes",
+    "constraint_name": "2200_26700_2_not_null",
+    "constraint_type": "CHECK"
+  },
+  {
+    "table_name": "product_attributes",
+    "constraint_name": "2200_26700_1_not_null",
+    "constraint_type": "CHECK"
+  },
+  {
+    "table_name": "product_attributes",
+    "constraint_name": "2200_26700_5_not_null",
+    "constraint_type": "CHECK"
+  },
+  {
+    "table_name": "product_translations",
+    "constraint_name": "product_translations_product_id_language_code_key",
+    "constraint_type": "UNIQUE"
+  },
+  {
+    "table_name": "product_translations",
+    "constraint_name": "product_translations_product_id_fkey",
+    "constraint_type": "FOREIGN KEY"
+  },
+  {
+    "table_name": "product_translations",
+    "constraint_name": "2200_17549_2_not_null",
+    "constraint_type": "CHECK"
+  },
+  {
+    "table_name": "product_translations",
+    "constraint_name": "product_translations_pkey",
+    "constraint_type": "PRIMARY KEY"
+  },
+  {
+    "table_name": "product_translations",
+    "constraint_name": "2200_17549_3_not_null",
+    "constraint_type": "CHECK"
+  },
+  {
+    "table_name": "product_translations",
+    "constraint_name": "2200_17549_4_not_null",
+    "constraint_type": "CHECK"
+  },
+  {
+    "table_name": "product_translations",
+    "constraint_name": "2200_17549_1_not_null",
+    "constraint_type": "CHECK"
+  },
+  {
+    "table_name": "product_variant_attributes",
+    "constraint_name": "product_variant_attributes_pkey",
+    "constraint_type": "PRIMARY KEY"
+  },
+  {
+    "table_name": "product_variant_attributes",
+    "constraint_name": "product_variant_attributes_attribute_id_fkey",
+    "constraint_type": "FOREIGN KEY"
+  },
+  {
+    "table_name": "product_variant_attributes",
+    "constraint_name": "product_variant_attributes_variant_id_fkey",
+    "constraint_type": "FOREIGN KEY"
+  },
+  {
+    "table_name": "product_variant_attributes",
+    "constraint_name": "pva_attribute_id_fkey_cascade",
+    "constraint_type": "FOREIGN KEY"
+  },
+  {
+    "table_name": "product_variant_attributes",
+    "constraint_name": "pva_variant_id_fkey_cascade",
+    "constraint_type": "FOREIGN KEY"
+  },
+  {
+    "table_name": "product_variant_attributes",
+    "constraint_name": "2200_26773_1_not_null",
+    "constraint_type": "CHECK"
+  },
+  {
+    "table_name": "product_variant_attributes",
+    "constraint_name": "2200_26773_2_not_null",
+    "constraint_type": "CHECK"
+  },
+  {
+    "table_name": "product_variant_attributes",
+    "constraint_name": "2200_26773_3_not_null",
+    "constraint_type": "CHECK"
+  },
+  {
+    "table_name": "product_variant_attributes",
+    "constraint_name": "2200_26773_4_not_null",
+    "constraint_type": "CHECK"
+  },
+  {
+    "table_name": "product_variant_attributes",
+    "constraint_name": "2200_26773_5_not_null",
+    "constraint_type": "CHECK"
+  },
+  {
+    "table_name": "product_variants",
+    "constraint_name": "2200_26755_4_not_null",
+    "constraint_type": "CHECK"
+  },
+  {
+    "table_name": "product_variants",
+    "constraint_name": "2200_26755_2_not_null",
+    "constraint_type": "CHECK"
+  },
+  {
+    "table_name": "product_variants",
+    "constraint_name": "2200_26755_1_not_null",
+    "constraint_type": "CHECK"
+  },
+  {
+    "table_name": "product_variants",
+    "constraint_name": "pv_product_id_fkey_cascade",
+    "constraint_type": "FOREIGN KEY"
+  },
+  {
+    "table_name": "product_variants",
+    "constraint_name": "2200_26755_9_not_null",
+    "constraint_type": "CHECK"
+  },
+  {
+    "table_name": "product_variants",
+    "constraint_name": "2200_26755_8_not_null",
+    "constraint_type": "CHECK"
+  },
+  {
+    "table_name": "product_variants",
+    "constraint_name": "2200_26755_6_not_null",
+    "constraint_type": "CHECK"
+  },
+  {
+    "table_name": "product_variants",
+    "constraint_name": "product_variants_pkey",
+    "constraint_type": "PRIMARY KEY"
+  },
+  {
+    "table_name": "product_variants",
+    "constraint_name": "product_variants_product_id_fkey",
+    "constraint_type": "FOREIGN KEY"
+  },
+  {
+    "table_name": "product_variants",
+    "constraint_name": "product_variants_sku_key",
+    "constraint_type": "UNIQUE"
+  },
+  {
+    "table_name": "products",
+    "constraint_name": "products_slug_key",
+    "constraint_type": "UNIQUE"
+  },
+  {
+    "table_name": "products",
+    "constraint_name": "products_pkey",
+    "constraint_type": "PRIMARY KEY"
+  },
+  {
+    "table_name": "products",
+    "constraint_name": "2200_17523_7_not_null",
+    "constraint_type": "CHECK"
+  },
+  {
+    "table_name": "products",
+    "constraint_name": "2200_17523_5_not_null",
+    "constraint_type": "CHECK"
+  },
+  {
+    "table_name": "products",
+    "constraint_name": "2200_17523_2_not_null",
+    "constraint_type": "CHECK"
+  },
+  {
+    "table_name": "products",
+    "constraint_name": "2200_17523_1_not_null",
+    "constraint_type": "CHECK"
+  },
+  {
+    "table_name": "products",
+    "constraint_name": "2200_17523_14_not_null",
+    "constraint_type": "CHECK"
+  },
+  {
+    "table_name": "products",
+    "constraint_name": "products_category_id_fkey",
+    "constraint_type": "FOREIGN KEY"
+  },
+  {
+    "table_name": "products",
+    "constraint_name": "2200_17523_13_not_null",
+    "constraint_type": "CHECK"
+  },
+  {
+    "table_name": "products",
+    "constraint_name": "2200_17523_4_not_null",
+    "constraint_type": "CHECK"
+  },
+  {
+    "table_name": "profiles",
+    "constraint_name": "profiles_id_fkey",
+    "constraint_type": "FOREIGN KEY"
+  },
+  {
+    "table_name": "profiles",
+    "constraint_name": "2200_22157_1_not_null",
+    "constraint_type": "CHECK"
+  },
+  {
+    "table_name": "profiles",
+    "constraint_name": "2200_22157_5_not_null",
+    "constraint_type": "CHECK"
+  },
+  {
+    "table_name": "profiles",
+    "constraint_name": "2200_22157_6_not_null",
+    "constraint_type": "CHECK"
+  },
+  {
+    "table_name": "profiles",
+    "constraint_name": "profiles_pkey",
+    "constraint_type": "PRIMARY KEY"
+  },
+  {
+    "table_name": "reviews",
+    "constraint_name": "reviews_product_id_fkey",
+    "constraint_type": "FOREIGN KEY"
+  },
+  {
+    "table_name": "reviews",
+    "constraint_name": "reviews_pkey",
+    "constraint_type": "PRIMARY KEY"
+  },
+  {
+    "table_name": "reviews",
+    "constraint_name": "2200_17564_6_not_null",
+    "constraint_type": "CHECK"
+  },
+  {
+    "table_name": "reviews",
+    "constraint_name": "2200_17564_4_not_null",
+    "constraint_type": "CHECK"
+  },
+  {
+    "table_name": "reviews",
+    "constraint_name": "2200_17564_2_not_null",
+    "constraint_type": "CHECK"
+  },
+  {
+    "table_name": "reviews",
+    "constraint_name": "2200_17564_1_not_null",
+    "constraint_type": "CHECK"
+  },
+  {
+    "table_name": "reviews",
+    "constraint_name": "reviews_user_id_fkey",
+    "constraint_type": "FOREIGN KEY"
+  },
+  {
+    "table_name": "reviews",
+    "constraint_name": "reviews_rating_check",
+    "constraint_type": "CHECK"
+  },
+  {
+    "table_name": "seller_applications",
+    "constraint_name": "seller_applications_store_id_fkey",
+    "constraint_type": "FOREIGN KEY"
+  },
+  {
+    "table_name": "seller_applications",
+    "constraint_name": "seller_applications_user_id_store_id_key",
+    "constraint_type": "UNIQUE"
+  },
+  {
+    "table_name": "seller_applications",
+    "constraint_name": "seller_applications_user_id_fkey",
+    "constraint_type": "FOREIGN KEY"
+  },
+  {
+    "table_name": "seller_applications",
+    "constraint_name": "seller_applications_pkey",
+    "constraint_type": "PRIMARY KEY"
+  },
+  {
+    "table_name": "seller_applications",
+    "constraint_name": "2200_28758_1_not_null",
+    "constraint_type": "CHECK"
+  },
+  {
+    "table_name": "site_texts",
+    "constraint_name": "2200_27694_5_not_null",
+    "constraint_type": "CHECK"
+  },
+  {
+    "table_name": "site_texts",
+    "constraint_name": "2200_27694_6_not_null",
+    "constraint_type": "CHECK"
+  },
+  {
+    "table_name": "site_texts",
+    "constraint_name": "2200_27694_1_not_null",
+    "constraint_type": "CHECK"
+  },
+  {
+    "table_name": "site_texts",
+    "constraint_name": "2200_27694_2_not_null",
+    "constraint_type": "CHECK"
+  },
+  {
+    "table_name": "site_texts",
+    "constraint_name": "2200_27694_3_not_null",
+    "constraint_type": "CHECK"
+  },
+  {
+    "table_name": "site_texts",
+    "constraint_name": "2200_27694_4_not_null",
+    "constraint_type": "CHECK"
+  },
+  {
+    "table_name": "site_texts",
+    "constraint_name": "site_texts_pkey",
+    "constraint_type": "PRIMARY KEY"
+  },
+  {
+    "table_name": "store_translations",
+    "constraint_name": "2200_28741_1_not_null",
+    "constraint_type": "CHECK"
+  },
+  {
+    "table_name": "store_translations",
+    "constraint_name": "2200_28741_3_not_null",
+    "constraint_type": "CHECK"
+  },
+  {
+    "table_name": "store_translations",
+    "constraint_name": "store_translations_pkey",
+    "constraint_type": "PRIMARY KEY"
+  },
+  {
+    "table_name": "store_translations",
+    "constraint_name": "store_translations_store_id_fkey",
+    "constraint_type": "FOREIGN KEY"
+  },
+  {
+    "table_name": "store_translations",
+    "constraint_name": "store_translations_store_id_language_code_key",
+    "constraint_type": "UNIQUE"
+  },
+  {
+    "table_name": "store_translations",
+    "constraint_name": "2200_28741_4_not_null",
+    "constraint_type": "CHECK"
+  },
+  {
+    "table_name": "stores",
+    "constraint_name": "2200_28721_1_not_null",
+    "constraint_type": "CHECK"
+  },
+  {
+    "table_name": "stores",
+    "constraint_name": "stores_pkey",
+    "constraint_type": "PRIMARY KEY"
+  },
+  {
+    "table_name": "stores",
+    "constraint_name": "stores_slug_key",
+    "constraint_type": "UNIQUE"
+  },
+  {
+    "table_name": "stores",
+    "constraint_name": "stores_owner_id_fkey",
+    "constraint_type": "FOREIGN KEY"
+  },
+  {
+    "table_name": "user_roles",
+    "constraint_name": "2200_22171_3_not_null",
+    "constraint_type": "CHECK"
+  },
+  {
+    "table_name": "user_roles",
+    "constraint_name": "2200_22171_2_not_null",
+    "constraint_type": "CHECK"
+  },
+  {
+    "table_name": "user_roles",
+    "constraint_name": "2200_22171_1_not_null",
+    "constraint_type": "CHECK"
+  },
+  {
+    "table_name": "user_roles",
+    "constraint_name": "user_roles_pkey",
+    "constraint_type": "PRIMARY KEY"
+  },
+  {
+    "table_name": "user_roles",
+    "constraint_name": "user_roles_user_id_fkey",
+    "constraint_type": "FOREIGN KEY"
+  },
+  {
+    "table_name": "user_roles",
+    "constraint_name": "user_roles_user_id_role_key",
+    "constraint_type": "UNIQUE"
+  },
+  {
+    "table_name": "user_roles",
+    "constraint_name": "2200_22171_4_not_null",
+    "constraint_type": "CHECK"
+  }
+]
+
+RLS Policies:
+[
+  {
+    "cmd": "DELETE",
+    "qual": "(auth.uid() = user_id)",
+    "roles": [
+      "public"
+    ],
+    "tablename": "addresses",
+    "permissive": "PERMISSIVE",
+    "policyname": "Users can delete their own addresses",
+    "schemaname": "public",
+    "with_check": null
+  },
+  {
+    "cmd": "INSERT",
+    "qual": null,
+    "roles": [
+      "public"
+    ],
+    "tablename": "addresses",
+    "permissive": "PERMISSIVE",
+    "policyname": "Users can insert their own addresses",
+    "schemaname": "public",
+    "with_check": "(auth.uid() = user_id)"
+  },
+  {
+    "cmd": "UPDATE",
+    "qual": "(auth.uid() = user_id)",
+    "roles": [
+      "public"
+    ],
+    "tablename": "addresses",
+    "permissive": "PERMISSIVE",
+    "policyname": "Users can update their own addresses",
+    "schemaname": "public",
+    "with_check": null
+  },
+  {
+    "cmd": "SELECT",
+    "qual": "(auth.uid() = user_id)",
+    "roles": [
+      "public"
+    ],
+    "tablename": "addresses",
+    "permissive": "PERMISSIVE",
+    "policyname": "Users can view their own addresses",
+    "schemaname": "public",
+    "with_check": null
+  },
+  {
+    "cmd": "DELETE",
+    "qual": "(auth.uid() = user_id)",
+    "roles": [
+      "public"
+    ],
+    "tablename": "cart_items",
+    "permissive": "PERMISSIVE",
+    "policyname": "Users can delete from their own cart",
+    "schemaname": "public",
+    "with_check": null
+  },
+  {
+    "cmd": "INSERT",
+    "qual": null,
+    "roles": [
+      "public"
+    ],
+    "tablename": "cart_items",
+    "permissive": "PERMISSIVE",
+    "policyname": "Users can insert to their own cart",
+    "schemaname": "public",
+    "with_check": "(auth.uid() = user_id)"
+  },
+  {
+    "cmd": "UPDATE",
+    "qual": "(auth.uid() = user_id)",
+    "roles": [
+      "public"
+    ],
+    "tablename": "cart_items",
+    "permissive": "PERMISSIVE",
+    "policyname": "Users can update their own cart",
+    "schemaname": "public",
+    "with_check": null
+  },
+  {
+    "cmd": "SELECT",
+    "qual": "(auth.uid() = user_id)",
+    "roles": [
+      "public"
+    ],
+    "tablename": "cart_items",
+    "permissive": "PERMISSIVE",
+    "policyname": "Users can view their own cart",
+    "schemaname": "public",
+    "with_check": null
+  },
+  {
+    "cmd": "SELECT",
+    "qual": "true",
+    "roles": [
+      "public"
+    ],
+    "tablename": "categories",
+    "permissive": "PERMISSIVE",
+    "policyname": "Categories are viewable by everyone",
+    "schemaname": "public",
+    "with_check": null
+  },
+  {
+    "cmd": "SELECT",
+    "qual": "true",
+    "roles": [
+      "public"
+    ],
+    "tablename": "category_translations",
+    "permissive": "PERMISSIVE",
+    "policyname": "Category translations are viewable by everyone",
+    "schemaname": "public",
+    "with_check": null
+  },
+  {
+    "cmd": "SELECT",
+    "qual": "true",
+    "roles": [
+      "public"
+    ],
+    "tablename": "coupons",
+    "permissive": "PERMISSIVE",
+    "policyname": "Coupons are viewable by everyone",
+    "schemaname": "public",
+    "with_check": null
+  },
+  {
+    "cmd": "SELECT",
+    "qual": "(EXISTS ( SELECT 1\n   FROM orders\n  WHERE ((orders.id = order_items.order_id) AND (orders.user_id = auth.uid()))))",
+    "roles": [
+      "public"
+    ],
+    "tablename": "order_items",
+    "permissive": "PERMISSIVE",
+    "policyname": "Users can view their order items",
+    "schemaname": "public",
+    "with_check": null
+  },
+  {
+    "cmd": "INSERT",
+    "qual": null,
+    "roles": [
+      "public"
+    ],
+    "tablename": "orders",
+    "permissive": "PERMISSIVE",
+    "policyname": "Users can insert their own orders",
+    "schemaname": "public",
+    "with_check": "(auth.uid() = user_id)"
+  },
+  {
+    "cmd": "SELECT",
+    "qual": "(auth.uid() = user_id)",
+    "roles": [
+      "public"
+    ],
+    "tablename": "orders",
+    "permissive": "PERMISSIVE",
+    "policyname": "Users can view their own orders",
+    "schemaname": "public",
+    "with_check": null
+  },
+  {
+    "cmd": "SELECT",
+    "qual": "true",
+    "roles": [
+      "public"
+    ],
+    "tablename": "product_attribute_translations",
+    "permissive": "PERMISSIVE",
+    "policyname": "Product attribute translations are viewable by everyone",
+    "schemaname": "public",
+    "with_check": null
+  },
+  {
+    "cmd": "SELECT",
+    "qual": "true",
+    "roles": [
+      "anon",
+      "authenticated"
+    ],
+    "tablename": "product_attribute_translations",
+    "permissive": "PERMISSIVE",
+    "policyname": "Public can view all attribute translations",
+    "schemaname": "public",
+    "with_check": null
+  },
+  {
+    "cmd": "SELECT",
+    "qual": "true",
+    "roles": [
+      "public"
+    ],
+    "tablename": "product_attribute_value_translations",
+    "permissive": "PERMISSIVE",
+    "policyname": "Product attribute value translations are viewable by everyone",
+    "schemaname": "public",
+    "with_check": null
+  },
+  {
+    "cmd": "SELECT",
+    "qual": "true",
+    "roles": [
+      "anon",
+      "authenticated"
+    ],
+    "tablename": "product_attribute_value_translations",
+    "permissive": "PERMISSIVE",
+    "policyname": "Public can view all attribute value translations",
+    "schemaname": "public",
+    "with_check": null
+  },
+  {
+    "cmd": "SELECT",
+    "qual": "true",
+    "roles": [
+      "public"
+    ],
+    "tablename": "product_attribute_values",
+    "permissive": "PERMISSIVE",
+    "policyname": "Product attribute values are viewable by everyone",
+    "schemaname": "public",
+    "with_check": null
+  },
+  {
+    "cmd": "SELECT",
+    "qual": "true",
+    "roles": [
+      "public"
+    ],
+    "tablename": "product_attributes",
+    "permissive": "PERMISSIVE",
+    "policyname": "Product attributes are viewable by everyone",
+    "schemaname": "public",
+    "with_check": null
+  },
+  {
+    "cmd": "SELECT",
+    "qual": "true",
+    "roles": [
+      "public"
+    ],
+    "tablename": "product_translations",
+    "permissive": "PERMISSIVE",
+    "policyname": "Product translations are viewable by everyone",
+    "schemaname": "public",
+    "with_check": null
+  },
+  {
+    "cmd": "SELECT",
+    "qual": "true",
+    "roles": [
+      "public"
+    ],
+    "tablename": "product_variant_attributes",
+    "permissive": "PERMISSIVE",
+    "policyname": "Product variant attributes are viewable by everyone",
+    "schemaname": "public",
+    "with_check": null
+  },
+  {
+    "cmd": "SELECT",
+    "qual": "true",
+    "roles": [
+      "public"
+    ],
+    "tablename": "product_variants",
+    "permissive": "PERMISSIVE",
+    "policyname": "Product variants are viewable by everyone",
+    "schemaname": "public",
+    "with_check": null
+  },
+  {
+    "cmd": "SELECT",
+    "qual": "true",
+    "roles": [
+      "public"
+    ],
+    "tablename": "products",
+    "permissive": "PERMISSIVE",
+    "policyname": "Products are viewable by everyone",
+    "schemaname": "public",
+    "with_check": null
+  },
+  {
+    "cmd": "INSERT",
+    "qual": null,
+    "roles": [
+      "public"
+    ],
+    "tablename": "profiles",
+    "permissive": "PERMISSIVE",
+    "policyname": "Users can insert own profile",
+    "schemaname": "public",
+    "with_check": "(auth.uid() = id)"
+  },
+  {
+    "cmd": "UPDATE",
+    "qual": "(auth.uid() = id)",
+    "roles": [
+      "public"
+    ],
+    "tablename": "profiles",
+    "permissive": "PERMISSIVE",
+    "policyname": "Users can update own profile",
+    "schemaname": "public",
+    "with_check": null
+  },
+  {
+    "cmd": "SELECT",
+    "qual": "true",
+    "roles": [
+      "public"
+    ],
+    "tablename": "profiles",
+    "permissive": "PERMISSIVE",
+    "policyname": "Users can view all profiles",
+    "schemaname": "public",
+    "with_check": null
+  },
+  {
+    "cmd": "SELECT",
+    "qual": "true",
+    "roles": [
+      "public"
+    ],
+    "tablename": "reviews",
+    "permissive": "PERMISSIVE",
+    "policyname": "Reviews are viewable by everyone",
+    "schemaname": "public",
+    "with_check": null
+  },
+  {
+    "cmd": "INSERT",
+    "qual": null,
+    "roles": [
+      "public"
+    ],
+    "tablename": "reviews",
+    "permissive": "PERMISSIVE",
+    "policyname": "Users can create reviews",
+    "schemaname": "public",
+    "with_check": "(auth.uid() = user_id)"
+  },
+  {
+    "cmd": "DELETE",
+    "qual": "(auth.uid() = user_id)",
+    "roles": [
+      "public"
+    ],
+    "tablename": "reviews",
+    "permissive": "PERMISSIVE",
+    "policyname": "Users can delete their own reviews",
+    "schemaname": "public",
+    "with_check": null
+  },
+  {
+    "cmd": "UPDATE",
+    "qual": "(auth.uid() = user_id)",
+    "roles": [
+      "public"
+    ],
+    "tablename": "reviews",
+    "permissive": "PERMISSIVE",
+    "policyname": "Users can update their own reviews",
+    "schemaname": "public",
+    "with_check": null
+  },
+  {
+    "cmd": "DELETE",
+    "qual": "(EXISTS ( SELECT 1\n   FROM user_roles ur\n  WHERE ((ur.user_id = auth.uid()) AND ((ur.role)::text = 'admin'::text))))",
+    "roles": [
+      "authenticated"
+    ],
+    "tablename": "site_texts",
+    "permissive": "PERMISSIVE",
+    "policyname": "Admins delete site_texts",
+    "schemaname": "public",
+    "with_check": null
+  },
+  {
+    "cmd": "INSERT",
+    "qual": null,
+    "roles": [
+      "authenticated"
+    ],
+    "tablename": "site_texts",
+    "permissive": "PERMISSIVE",
+    "policyname": "Admins insert site_texts",
+    "schemaname": "public",
+    "with_check": "(EXISTS ( SELECT 1\n   FROM user_roles ur\n  WHERE ((ur.user_id = auth.uid()) AND ((ur.role)::text = 'admin'::text))))"
+  },
+  {
+    "cmd": "UPDATE",
+    "qual": "(EXISTS ( SELECT 1\n   FROM user_roles ur\n  WHERE ((ur.user_id = auth.uid()) AND ((ur.role)::text = 'admin'::text))))",
+    "roles": [
+      "authenticated"
+    ],
+    "tablename": "site_texts",
+    "permissive": "PERMISSIVE",
+    "policyname": "Admins update site_texts",
+    "schemaname": "public",
+    "with_check": "(EXISTS ( SELECT 1\n   FROM user_roles ur\n  WHERE ((ur.user_id = auth.uid()) AND ((ur.role)::text = 'admin'::text))))"
+  },
+  {
+    "cmd": "SELECT",
+    "qual": "true",
+    "roles": [
+      "public"
+    ],
+    "tablename": "site_texts",
+    "permissive": "PERMISSIVE",
+    "policyname": "Allow select site_texts",
+    "schemaname": "public",
+    "with_check": null
+  },
+  {
+    "cmd": "SELECT",
+    "qual": "true",
+    "roles": [
+      "public"
+    ],
+    "tablename": "store_translations",
+    "permissive": "PERMISSIVE",
+    "policyname": "Anyone can view store translations",
+    "schemaname": "public",
+    "with_check": null
+  },
+  {
+    "cmd": "ALL",
+    "qual": "(EXISTS ( SELECT 1\n   FROM stores s\n  WHERE ((s.id = store_translations.store_id) AND (s.owner_id = auth.uid()))))",
+    "roles": [
+      "public"
+    ],
+    "tablename": "store_translations",
+    "permissive": "PERMISSIVE",
+    "policyname": "Store owners can manage translations",
+    "schemaname": "public",
+    "with_check": null
+  },
+  {
+    "cmd": "SELECT",
+    "qual": "true",
+    "roles": [
+      "public"
+    ],
+    "tablename": "stores",
+    "permissive": "PERMISSIVE",
+    "policyname": "Anyone can view stores",
+    "schemaname": "public",
+    "with_check": null
+  },
+  {
+    "cmd": "INSERT",
+    "qual": null,
+    "roles": [
+      "public"
+    ],
+    "tablename": "stores",
+    "permissive": "PERMISSIVE",
+    "policyname": "Authenticated users can create stores",
+    "schemaname": "public",
+    "with_check": "(auth.uid() IS NOT NULL)"
+  },
+  {
+    "cmd": "UPDATE",
+    "qual": "(auth.uid() = owner_id)",
+    "roles": [
+      "public"
+    ],
+    "tablename": "stores",
+    "permissive": "PERMISSIVE",
+    "policyname": "Store owners can update their stores",
+    "schemaname": "public",
+    "with_check": null
+  },
+  {
+    "cmd": "SELECT",
+    "qual": "(auth.uid() = user_id)",
+    "roles": [
+      "public"
+    ],
+    "tablename": "user_roles",
+    "permissive": "PERMISSIVE",
+    "policyname": "Users can view their own roles",
+    "schemaname": "public",
+    "with_check": null
+  }
+]
