@@ -8,7 +8,7 @@ import { fileURLToPath } from 'url'
 dotenv.config()
 
 const supabaseUrl = process.env.VITE_SUPABASE_URL
-const supabaseKey = process.env.VITE_SUPABASE_SERVICE_ROLE_KEY // Note: Use service role key for migrations
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY // Note: Use service role key for migrations
 
 if (!supabaseUrl || !supabaseKey) {
   console.error('Missing Supabase credentials in .env file')
