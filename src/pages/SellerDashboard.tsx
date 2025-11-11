@@ -25,7 +25,7 @@ const SellerDashboard = () => {
       const { data, error } = await supabase
         .from('stores')
         .select('*, products(count)')
-        .eq('user_id', user?.id);
+        .eq('owner_id', user?.id);
       
       if (error) throw error;
       return data;
