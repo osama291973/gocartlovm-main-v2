@@ -39,10 +39,10 @@ const Header = () => {
               <Link to="/shop" className="text-sm font-medium hover:text-primary transition-colors">
                 {t('shop')}
               </Link>
-              {/* Show Seller link only to approved sellers, otherwise show Become a Seller */}
-              {hasRole('seller_approved') ? (
-                <Link to="/stores" className="text-sm font-medium hover:text-primary transition-colors">
-                  {t('stores')}
+              {/* Seller link: if user is a seller go to seller dashboard, otherwise go to create-store */}
+              {hasRole('seller') ? (
+                <Link to="/seller" className="text-sm font-medium hover:text-primary transition-colors">
+                  {t('seller') || 'Seller'}
                 </Link>
               ) : (
                 <Link to="/create-store" className="text-sm font-medium hover:text-primary transition-colors">
@@ -50,9 +50,9 @@ const Header = () => {
                 </Link>
               )}
 
-              {/* Show Admin link only to admins */}
-              {hasRole('admin') && (
-                <Link to="/account" className="text-sm font-medium hover:text-primary transition-colors">
+              {/* Show Admin link only to admins who are not sellers (hide for pure seller view) */}
+              {hasRole('admin') && !hasRole('seller') && (
+                <Link to="/admin" className="text-sm font-medium hover:text-primary transition-colors">
                   Admin
                 </Link>
               )}
@@ -119,7 +119,7 @@ const Header = () => {
                         {t('myOrders')}
                       </DropdownMenuItem>
 
-                      {hasRole('seller_approved') && (
+                      {hasRole('seller') && (
                         <DropdownMenuItem onClick={() => navigate('/seller')}>
                           <User className="mr-2 h-4 w-4" />
                           {t('seller_dashboard')}

@@ -14,6 +14,7 @@ interface FormData {
   description_en: string;
   name_ar: string;
   description_ar: string;
+  logo: File | null;
 }
 
 const CreateStore = () => {
@@ -28,6 +29,7 @@ const CreateStore = () => {
     description_en: '',
     name_ar: '',
     description_ar: '',
+    logo: null,
   });
 
   useEffect(() => {
@@ -38,9 +40,7 @@ const CreateStore = () => {
 
     // Redirect if user is already a pending or approved seller
     if (!authLoading && user) {
-      if (hasRole('seller_approved')) {
-        navigate('/seller');
-      } else if (hasRole('seller_pending')) {
+      if (hasRole('seller')) {
         navigate('/seller');
       }
     }
@@ -60,17 +60,24 @@ const CreateStore = () => {
         throw new Error('Store name is required in at least one language');
       }
 
-      // Apply for seller status
-      // The generated Supabase types may not include the RPC signature for
-      // `apply_for_seller`, which makes the `args` parameter typed as `never`.
-      // Cast the args to `any` to keep runtime behavior while removing the
-      // TypeScript overload error. For a long-term fix, add the RPC to
-      // `src/types/supabase.ts` (or regenerate types) so the RPC is typed.
-      // Use an any-cast on the client when the generated types don't include
-      // RPC signatures. This avoids the 'parameter of type never' compile error.
+      let logoUrl = '/gocart-logo.svg'; // Default logo
+      if (formData.logo) {
+        // Upload logo to Supabase storage (bucket: store-logos)
+        const fileExt = formData.logo.name.split('.').pop();
+        const fileName = `${user.id}-${Date.now()}.${fileExt}`;
+        const { data: uploadData, error: uploadError } = await (supabase as any)
+          .storage
+          .from('store-logos')
+          .upload(fileName, formData.logo);
+        if (uploadError) throw uploadError;
+        logoUrl = `${process.env.VITE_SUPABASE_URL}/storage/v1/object/public/store-logos/${fileName}`;
+      }
+
+      // Apply for seller status, passing store name, description, and optional logo URL
       const { error: applicationError } = await (supabase as any).rpc('apply_for_seller', {
         store_name: formData.name_en || formData.name_ar,
-        store_description: formData.description_en || formData.description_ar
+        store_description: formData.description_en || formData.description_ar,
+        store_logo: logoUrl || null
       });
 
       if (applicationError) throw applicationError;
@@ -80,7 +87,6 @@ const CreateStore = () => {
         description: 'Your seller application has been submitted for review. You will be notified once it is approved.',
       });
 
-      // Redirect to seller page which will show the pending status
       navigate('/seller');
 
     } catch (error: any) {
@@ -160,6 +166,18 @@ const CreateStore = () => {
             value={formData.description_ar}
             onChange={(e) => setFormData({ ...formData, description_ar: e.target.value })}
             rows={4}
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="logo">
+            {language === 'ar' ? 'شعار المتجر (اختياري)' : 'Store Logo (optional)'}
+          </Label>
+          <Input
+            id="logo"
+            type="file"
+            accept="image/*"
+            onChange={(e) => setFormData({ ...formData, logo: e.target.files?.[0] || null })}
           />
         </div>
 

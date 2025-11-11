@@ -26,7 +26,7 @@ const AdminStores = () => {
     queryFn: async () => {
       const { data, error } = await (supabase as any)
         .from('stores')
-        .select(`id, owner_id, slug, status, created_at, translations:store_translations(name, description, language_code)`);
+        .select(`id, owner_id, slug, status, created_at, logo_url, translations:store_translations(name, description, language_code), application:seller_applications(status)`);
       if (error) throw error;
       return data;
     },
@@ -172,7 +172,13 @@ const AdminStores = () => {
 
         <main className="flex-1 p-8">
           <div className="flex justify-between items-center mb-8">
-            <h1 className="text-4xl font-bold">Stores Management</h1>
+            <div className="flex items-center gap-4">
+              <a href="/" className="flex items-center gap-2">
+                <img src="/gocart-logo.svg" alt="GoCart Logo" className="h-10 w-10" />
+                <span className="text-2xl font-bold text-primary">gocart<span className="text-green-600">.</span></span>
+              </a>
+              <h1 className="text-4xl font-bold ml-6">Stores Management</h1>
+            </div>
             <div className="flex items-center gap-4">
               <p className="text-sm">Hi, Osama</p>
               <div className="w-10 h-10 rounded-full bg-[hsl(var(--primary))] text-primary-foreground flex items-center justify-center">
@@ -185,33 +191,34 @@ const AdminStores = () => {
 
           <div className="mb-6">
             <h2 className="text-xl font-semibold mb-4">Live Stores</h2>
-            <div className="space-y-4">
+            <div className="space-y-8">
               {allStores.map((store: any) => {
                 const en = store.translations?.find((t: any) => t.language_code === 'en');
                 const ar = store.translations?.find((t: any) => t.language_code === 'ar');
+                const logoUrl = store.logo_url || '/gocart-logo.svg';
+                const appStatus = store.application?.[0]?.status || 'pending';
+                // Determine direction based on language (default: left-to-right)
+                const lang = (en?.name || ar?.name) === ar?.name ? 'ar' : 'en';
+                const direction = lang === 'ar' ? 'rtl' : 'ltr';
                 return (
-                  <Card key={store.id} className="p-6">
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <h3 className="text-xl font-semibold mb-2">{en?.name || ar?.name || store.slug}</h3>
-                        <p className="text-sm text-muted-foreground mb-2">Owner: {store.owner_id}</p>
-                        <p className="text-sm mb-2">{en?.description || ar?.description || 'No description'}</p>
+                  <Card key={store.id} className={`p-8 w-full max-w-6xl mx-auto flex flex-col gap-4`} style={{ direction }}>
+                    <div className={`flex items-center gap-6 mb-2 ${direction === 'rtl' ? 'justify-end' : ''}`}>
+                      <img src={logoUrl} alt="Store Logo" className="h-20 w-20 rounded-full border" />
+                      <div className="flex flex-col flex-1">
+                        <h3 className="text-2xl font-bold mb-1">{en?.name || ar?.name || store.slug}</h3>
+                        <p className="text-sm text-muted-foreground mb-1">Owner: {store.owner_id}</p>
+                        <p className="text-sm mb-1">{en?.description || ar?.description || 'No description'}</p>
                         <p className="text-xs text-muted-foreground">Created: {new Date(store.created_at).toLocaleDateString()}</p>
                       </div>
-
-                      <div className="flex flex-col items-end gap-2">
-                        <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm ${store.status === 'activated' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-700'}`}>
-                          {store.status === 'activated' ? 'Active' : 'Inactive'}
-                        </div>
-                        <div className="flex items-center gap-3">
-                          <Switch
-                            checked={store.status === 'activated'}
-                            onCheckedChange={(checked: boolean) => handleChangeStatus(store, checked ? 'activated' : 'deactivated')}
-                          />
-                          <span className="text-sm">{store.status === 'activated' ? 'Active' : 'Inactive'}</span>
-                          <Button variant="outline" onClick={() => handleReject(store)}>Reject</Button>
-                        </div>
-                      </div>
+                      <span className={`px-3 py-1 rounded-full text-sm font-semibold ${appStatus === 'approved' ? 'bg-green-100 text-green-800' : appStatus === 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-gray-100 text-gray-700'}`}>{appStatus}</span>
+                    </div>
+                    {/* Toggle at bottom, full width */}
+                    <div className={`flex items-center gap-3 mt-6 ${direction === 'rtl' ? 'justify-start' : 'justify-end'}`}>
+                      <Switch
+                        checked={store.status === 'activated'}
+                        onCheckedChange={(checked: boolean) => handleChangeStatus(store, checked ? 'activated' : 'deactivated')}
+                      />
+                      <span className={`text-sm px-3 py-1 rounded-full ${store.status === 'activated' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-700'}`}>{store.status === 'activated' ? 'Active' : 'Inactive'}</span>
                     </div>
                   </Card>
                 );
