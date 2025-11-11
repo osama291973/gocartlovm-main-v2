@@ -44,7 +44,13 @@ const AdminCoupons = () => {
 
   return (
     <div className="container mx-auto p-8">
-      <h1 className="text-3xl font-bold mb-6">Coupons</h1>
+      {/* Header with Logo Text */}
+      <div className="mb-8">
+        <a href="/" className="inline-flex items-center mb-4 text-2xl font-semibold">
+          <span className="text-green-600">go</span><span className="text-black">cart</span>
+        </a>
+        <h1 className="text-3xl font-bold">Coupons</h1>
+      </div>
       <div className="space-y-4">
         {coupons?.length === 0 ? (
           <p className="text-muted-foreground">No coupons found</p>

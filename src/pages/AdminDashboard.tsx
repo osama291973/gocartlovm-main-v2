@@ -112,12 +112,18 @@ const AdminDashboard = () => {
 
         {/* Main Content */}
         <main className="flex-1 p-8">
-          <div className="flex justify-between items-center mb-8">
-            <h1 className="text-4xl font-bold">Admin Dashboard</h1>
-            <div className="flex items-center gap-4">
-              <p className="text-sm">Hi, Osama</p>
-              <div className="w-10 h-10 rounded-full bg-[hsl(var(--primary))] text-primary-foreground flex items-center justify-center">
-                O
+          {/* Header with Logo Text */}
+          <div className="mb-8">
+            <a href="/" className="inline-flex items-center mb-4 text-2xl font-semibold">
+              <span className="text-green-600">go</span><span className="text-black">cart</span>
+            </a>
+            <div className="flex justify-between items-center">
+              <h1 className="text-4xl font-bold">Admin Dashboard</h1>
+              <div className="flex items-center gap-4">
+                <p className="text-sm">Hi, Osama</p>
+                <div className="w-10 h-10 rounded-full bg-[hsl(var(--primary))] text-primary-foreground flex items-center justify-center">
+                  O
+                </div>
               </div>
             </div>
           </div>

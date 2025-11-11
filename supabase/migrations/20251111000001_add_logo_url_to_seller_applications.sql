@@ -61,7 +61,7 @@ BEGIN
             store_slug,
             auth.uid(),
             COALESCE(store_logo, '/gocart-logo.svg'),
-            'deactivated'::store_status
+            'inactive'::store_status
         )
         RETURNING id INTO new_store_id;
 
@@ -109,8 +109,7 @@ COMMIT;
 
 -- NOTES:
 -- 1) All old apply_for_seller functions are dropped with CASCADE to handle dependencies.
--- 2) The default status for new stores is now 'deactivated' instead of 'pending' 
---    (matching the new enum values: 'activated' and 'deactivated').
+-- 2) The default status for new stores is now 'inactive' (matching the new enum values: 'active' and 'inactive').
 -- 3) If store_logo is NULL or not provided, defaults to '/gocart-logo.svg'.
 -- 4) The function stores logo_url in both stores and seller_applications tables.
 -- 5) The user_roles insert now uses 'seller' (not 'seller_pending') with status 'active'.

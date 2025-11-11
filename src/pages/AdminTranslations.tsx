@@ -99,10 +99,16 @@ const AdminTranslations: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-background p-8">
-      <h1 className="text-2xl font-bold mb-4">Site Translations</h1>
-      <p className="mb-6 text-sm text-muted-foreground">
-        Edit site UI strings. Changes are saved to the database and will override built-in translations.
-      </p>
+      {/* Header with Logo Text */}
+      <div className="mb-8">
+        <a href="/" className="inline-flex items-center mb-4 text-2xl font-semibold">
+          <span className="text-green-600">go</span><span className="text-black">cart</span>
+        </a>
+        <h1 className="text-2xl font-bold mb-4">Site Translations</h1>
+        <p className="mb-6 text-sm text-muted-foreground">
+          Edit site UI strings. Changes are saved to the database and will override built-in translations.
+        </p>
+      </div>
 
       <div className="space-y-4">
         {Object.keys(edits).map((key) => (

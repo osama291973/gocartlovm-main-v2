@@ -62,18 +62,12 @@ const AdminSellerApplications = () => {
 
   const handleApprove = async (application: SellerApplication) => {
     try {
-      // Try RPC using common parameter names. Some DBs expose the function
-      // as approve_seller_application(application_id uuid) while others use
-      // approve_seller_application(target_user_id uuid). Attempt both to be
-      // resilient to migrations applied in different orders.
-      let res: any;
-      res = await (supabase as any).rpc('approve_seller_application', { application_id: application.id });
-      if (res?.error) {
-        // If function not found or param mismatch, try alternative param
-        res = await (supabase as any).rpc('approve_seller_application', { target_user_id: application.user_id });
-      }
+      // Call RPC with application_id parameter
+      const { error } = await (supabase as any).rpc('approve_seller_application', { 
+        application_id: application.id 
+      });
 
-      if (res?.error) throw res.error;
+      if (error) throw error;
 
       toast({
         title: 'Application Approved',
@@ -94,14 +88,12 @@ const AdminSellerApplications = () => {
 
   const handleReject = async (application: SellerApplication) => {
     try {
-      // Try both parameter names as with approve
-      let res: any;
-      res = await (supabase as any).rpc('reject_seller_application', { application_id: application.id });
-      if (res?.error) {
-        res = await (supabase as any).rpc('reject_seller_application', { target_user_id: application.user_id });
-      }
+      // Call RPC with application_id parameter
+      const { error } = await (supabase as any).rpc('reject_seller_application', { 
+        application_id: application.id 
+      });
 
-      if (res?.error) throw res.error;
+      if (error) throw error;
 
       toast({
         title: 'Application Rejected',
@@ -125,7 +117,13 @@ const AdminSellerApplications = () => {
 
   return (
     <div className="container mx-auto p-8">
-      <h1 className="text-3xl font-bold mb-6">Pending Seller Applications</h1>
+      {/* Header with Logo Text */}
+      <div className="mb-8">
+        <a href="/" className="inline-flex items-center mb-4 text-2xl font-semibold">
+          <span className="text-green-600">go</span><span className="text-black">cart</span>
+        </a>
+        <h1 className="text-3xl font-bold">Pending Seller Applications</h1>
+      </div>
 
       <div className="space-y-4">
         {applications?.length === 0 ? (

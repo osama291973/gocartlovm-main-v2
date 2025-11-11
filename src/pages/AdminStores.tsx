@@ -41,7 +41,7 @@ const AdminStores = () => {
   const handleChangeStatus = async (store: any, newStatus: string) => {
     try {
       // If activating and there's a pending application, use the approve RPC to also grant role
-  if (newStatus === 'activated') {
+  if (newStatus === 'active') {
         const { data: appData } = await (supabase as any)
           .from('seller_applications')
           .select('id')
@@ -62,7 +62,7 @@ const AdminStores = () => {
             throw new Error('Approve RPC did not change application status (possible RLS or function error)');
           }
 
-          toast({ title: 'Store Approved', description: 'Store status set to activated.' });
+          toast({ title: 'Store Approved', description: 'Store status set to active.' });
           queryClient.invalidateQueries({ queryKey: ['admin-stores'] });
           return;
         }
@@ -115,7 +115,7 @@ const AdminStores = () => {
       } else {
         const { data, error } = await (supabase as any)
           .from('stores')
-    .update({ status: 'deactivated', updated_at: new Date() })
+    .update({ status: 'inactive', updated_at: new Date() })
           .eq('id', store.id)
           .select('id, status');
         if (error) throw error;
@@ -128,7 +128,7 @@ const AdminStores = () => {
         }
       }
 
-      toast({ title: 'Store Rejected', description: 'Store status set to deactivated.' });
+      toast({ title: 'Store Rejected', description: 'Store status set to inactive.' });
       queryClient.invalidateQueries({ queryKey: ['admin-stores'] });
     } catch (err: any) {
       console.error(err);
@@ -171,56 +171,133 @@ const AdminStores = () => {
         </aside>
 
         <main className="flex-1 p-8">
-          <div className="flex justify-between items-center mb-8">
-            <div className="flex items-center gap-4">
-              <a href="/" className="flex items-center gap-2">
-                <img src="/gocart-logo.svg" alt="GoCart Logo" className="h-10 w-10" />
-                <span className="text-2xl font-bold text-primary">gocart<span className="text-green-600">.</span></span>
-              </a>
-              <h1 className="text-4xl font-bold ml-6">Stores Management</h1>
-            </div>
-            <div className="flex items-center gap-4">
-              <p className="text-sm">Hi, Osama</p>
-              <div className="w-10 h-10 rounded-full bg-[hsl(var(--primary))] text-primary-foreground flex items-center justify-center">
-                O
+          <div className="mb-8">
+            <a href="/" className="inline-flex items-center mb-4 text-2xl font-semibold">
+              <span className="text-green-600">go</span><span className="text-black">cart</span>
+            </a>
+            <div className="flex justify-between items-start mb-6">
+              <h1 className="text-4xl font-bold">Stores Management</h1>
+              <div className="flex items-center gap-4">
+                <p className="text-sm">Hi, Osama</p>
+                <div className="w-10 h-10 rounded-full bg-[hsl(var(--primary))] text-primary-foreground flex items-center justify-center">
+                  O
+                </div>
               </div>
             </div>
+            <hr className="border-t border-gray-200" />
           </div>
 
           {/* All stores (activated / deactivated) */}
 
-          <div className="mb-6">
-            <h2 className="text-xl font-semibold mb-4">Live Stores</h2>
-            <div className="space-y-8">
+          <div className="mt-8">
+            <h2 className="text-xl font-semibold mb-6">Live Stores</h2>
+            <div className="space-y-4 w-3/5">
               {allStores.map((store: any) => {
                 const en = store.translations?.find((t: any) => t.language_code === 'en');
                 const ar = store.translations?.find((t: any) => t.language_code === 'ar');
                 const logoUrl = store.logo_url || '/gocart-logo.svg';
                 const appStatus = store.application?.[0]?.status || 'pending';
-                // Determine direction based on language (default: left-to-right)
-                const lang = (en?.name || ar?.name) === ar?.name ? 'ar' : 'en';
-                const direction = lang === 'ar' ? 'rtl' : 'ltr';
+                
                 return (
-                  <Card key={store.id} className={`p-8 w-full max-w-6xl mx-auto flex flex-col gap-4`} style={{ direction }}>
-                    <div className={`flex items-center gap-6 mb-2 ${direction === 'rtl' ? 'justify-end' : ''}`}>
-                      <img src={logoUrl} alt="Store Logo" className="h-20 w-20 rounded-full border" />
-                      <div className="flex flex-col flex-1">
-                        <h3 className="text-2xl font-bold mb-1">{en?.name || ar?.name || store.slug}</h3>
-                        <p className="text-sm text-muted-foreground mb-1">Owner: {store.owner_id}</p>
-                        <p className="text-sm mb-1">{en?.description || ar?.description || 'No description'}</p>
-                        <p className="text-xs text-muted-foreground">Created: {new Date(store.created_at).toLocaleDateString()}</p>
+                  <div key={store.id} className="border rounded-lg overflow-hidden bg-white hover:shadow-lg transition-shadow p-6">
+                    {/* Top Section: Logo + Store Name + Status Badge */}
+                    <div className="flex items-start gap-4 mb-6">
+                      {/* Left: Store Logo */}
+                      <div className="flex-shrink-0">
+                        <img
+                          src={logoUrl}
+                          alt="Store Logo"
+                          className="h-16 w-16 rounded object-cover border"
+                        />
                       </div>
-                      <span className={`px-3 py-1 rounded-full text-sm font-semibold ${appStatus === 'approved' ? 'bg-green-100 text-green-800' : appStatus === 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-gray-100 text-gray-700'}`}>{appStatus}</span>
+
+                      {/* Center-Right: Store Name + Status Badge */}
+                      <div className="flex-1 flex justify-between items-start">
+                        <div>
+                          <h3 className="text-xl font-bold mb-1">
+                            {en?.name || ar?.name || store.slug}
+                          </h3>
+                          <p className="text-sm text-gray-500">
+                            {store.slug}
+                          </p>
+                        </div>
+                        {/* Status Badge (top right) */}
+                        <span
+                          className={`px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap flex-shrink-0 ${
+                            appStatus === 'approved'
+                              ? 'bg-green-100 text-green-800'
+                              : appStatus === 'pending'
+                              ? 'bg-yellow-100 text-yellow-800'
+                              : 'bg-gray-100 text-gray-700'
+                          }`}
+                        >
+                          {appStatus}
+                        </span>
+                      </div>
                     </div>
-                    {/* Toggle at bottom, full width */}
-                    <div className={`flex items-center gap-3 mt-6 ${direction === 'rtl' ? 'justify-start' : 'justify-end'}`}>
-                      <Switch
-                        checked={store.status === 'activated'}
-                        onCheckedChange={(checked: boolean) => handleChangeStatus(store, checked ? 'activated' : 'deactivated')}
-                      />
-                      <span className={`text-sm px-3 py-1 rounded-full ${store.status === 'activated' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-700'}`}>{store.status === 'activated' ? 'Active' : 'Inactive'}</span>
+
+                    {/* Store Description */}
+                    <p className="text-sm text-gray-700 mb-4 leading-relaxed">
+                      {en?.description || ar?.description || 'No description'}
+                    </p>
+
+                    {/* Spacing - Empty lines effect */}
+                    <div className="mb-4"></div>
+
+                    {/* Store Details Section (Address, Phone, Email) */}
+                    <div className="space-y-2 text-sm text-gray-600 mb-4">
+                      {/* Address - placeholder for future field */}
+                      <div className="flex items-start gap-2">
+                        <span className="text-gray-400 min-w-max">📍</span>
+                        <span className="text-gray-400">Address will be added from seller_applications</span>
+                      </div>
+
+                      {/* Phone - placeholder for future field */}
+                      <div className="flex items-start gap-2">
+                        <span className="text-gray-400 min-w-max">📞</span>
+                        <span className="text-gray-400">Phone will be added from seller_applications</span>
+                      </div>
+
+                      {/* Email - placeholder for future field */}
+                      <div className="flex items-start gap-2">
+                        <span className="text-gray-400 min-w-max">✉️</span>
+                        <span className="text-gray-400">Email will be added from seller_applications</span>
+                      </div>
                     </div>
-                  </Card>
+
+                    {/* Spacing */}
+                    <div className="mb-4"></div>
+
+                    {/* Footer Section: Applied on + Toggle */}
+                    <div className="flex items-center justify-between pt-4 border-t">
+                      {/* Left: Applied on Date + Owner Logo */}
+                      <div className="flex items-center gap-2 text-xs text-gray-600">
+                        <span>Applied on {new Date(store.created_at).toLocaleDateString()} by</span>
+                        <div className="w-6 h-6 rounded-full bg-[hsl(var(--primary))] text-primary-foreground flex items-center justify-center text-xs font-bold flex-shrink-0">
+                          {store.owner_id.substring(0, 1).toUpperCase()}
+                        </div>
+                      </div>
+
+                      {/* Right: Active Status + Toggle Switch */}
+                      <div className="flex items-center gap-3">
+                        <span
+                          className={`text-xs font-medium px-2 py-1 rounded ${
+                            store.status === 'active'
+                              ? 'text-green-700'
+                              : 'text-gray-600'
+                          }`}
+                        >
+                          {store.status === 'active' ? 'Active' : 'Inactive'}
+                        </span>
+                        <Switch
+                          checked={store.status === 'active'}
+                          onCheckedChange={(checked: boolean) =>
+                            handleChangeStatus(store, checked ? 'active' : 'inactive')
+                          }
+                        />
+                      </div>
+                    </div>
+                  </div>
                 );
               })}
             </div>

@@ -23,6 +23,8 @@ const CreateStore = () => {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const { language } = useLanguage();
+  // Enforce Supabase free tier max file size (50 MB)
+  const MAX_FILE_SIZE = 50 * 1024 * 1024; // bytes
   
   const [formData, setFormData] = useState<FormData>({
     name_en: '',
@@ -62,15 +64,20 @@ const CreateStore = () => {
 
       let logoUrl = '/gocart-logo.svg'; // Default logo
       if (formData.logo) {
+        if (formData.logo.size > MAX_FILE_SIZE) {
+          throw new Error(language === 'ar' ? 'الملف كبير جدًا (حد 50 ميغابايت)' : 'File too large (limit: 50MB)');
+        }
         // Upload logo to Supabase storage (bucket: store-logos)
         const fileExt = formData.logo.name.split('.').pop();
-        const fileName = `${user.id}-${Date.now()}.${fileExt}`;
+        // store files under a user-specific folder so RLS policies that check foldername(name)[1] = auth.uid() work
+        const baseName = `${user.id}-${Date.now()}.${fileExt}`;
+        const filePath = `${user.id}/${baseName}`;
         const { data: uploadData, error: uploadError } = await (supabase as any)
           .storage
           .from('store-logos')
-          .upload(fileName, formData.logo);
+          .upload(filePath, formData.logo);
         if (uploadError) throw uploadError;
-        logoUrl = `${process.env.VITE_SUPABASE_URL}/storage/v1/object/public/store-logos/${fileName}`;
+        logoUrl = `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/store-logos/${filePath}`;
       }
 
       // Apply for seller status, passing store name, description, and optional logo URL
@@ -127,6 +134,11 @@ const CreateStore = () => {
             onChange={(e) => setFormData({ ...formData, name_en: e.target.value })}
             required={!formData.name_ar}
           />
+          <p className="text-sm text-muted-foreground mt-1">
+            {language === 'ar'
+              ? 'الحد الأقصى لحجم الملف: 50 ميغابايت (حد الخطة المجانية من Supabase)'
+              : 'Max file size: 50MB (Supabase free tier)'}
+          </p>
         </div>
 
         <div className="space-y-2">
@@ -177,7 +189,23 @@ const CreateStore = () => {
             id="logo"
             type="file"
             accept="image/*"
-            onChange={(e) => setFormData({ ...formData, logo: e.target.files?.[0] || null })}
+            onChange={(e) => {
+              const file = e.target.files?.[0] || null;
+              if (file && file.size > MAX_FILE_SIZE) {
+                toast({
+                  title: language === 'ar' ? 'حجم الملف كبير جداً' : 'File too large',
+                  description: language === 'ar'
+                    ? `الحد الأقصى المسموح به هو 50 ميغابايت. اختر ملفًا أصغر.`
+                    : `Maximum allowed size is 50MB. Please choose a smaller file.`,
+                  variant: 'destructive',
+                });
+                setFormData({ ...formData, logo: null });
+                // clear the file input value (best-effort)
+                (e.target as HTMLInputElement).value = '';
+                return;
+              }
+              setFormData({ ...formData, logo: file });
+            }}
           />
         </div>
 
