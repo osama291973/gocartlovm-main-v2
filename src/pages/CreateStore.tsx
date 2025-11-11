@@ -10,10 +10,14 @@ import { useToast } from '@/hooks/use-toast';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 interface FormData {
+  username: string;
   name_en: string;
   description_en: string;
   name_ar: string;
   description_ar: string;
+  email: string;
+  contact_number: string;
+  address: string;
   logo: File | null;
 }
 
@@ -27,10 +31,14 @@ const CreateStore = () => {
   const MAX_FILE_SIZE = 50 * 1024 * 1024; // bytes
   
   const [formData, setFormData] = useState<FormData>({
+    username: '',
     name_en: '',
     description_en: '',
     name_ar: '',
     description_ar: '',
+    email: '',
+    contact_number: '',
+    address: '',
     logo: null,
   });
 
@@ -80,11 +88,15 @@ const CreateStore = () => {
         logoUrl = `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/store-logos/${filePath}`;
       }
 
-      // Apply for seller status, passing store name, description, and optional logo URL
+      // Apply for seller status, passing store name, description, optional logo, username, and contact info
       const { error: applicationError } = await (supabase as any).rpc('apply_for_seller', {
         store_name: formData.name_en || formData.name_ar,
         store_description: formData.description_en || formData.description_ar,
-        store_logo: logoUrl || null
+        store_logo: logoUrl || null,
+        username: formData.username || null,
+        email: formData.email || null,
+        contact_number: formData.contact_number || null,
+        address: formData.address || null
       });
 
       if (applicationError) throw applicationError;
@@ -122,6 +134,22 @@ const CreateStore = () => {
       </p>
 
       <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="space-y-2">
+          <Label htmlFor="username">
+            {language === 'ar' ? 'اسم المستخدم' : 'Username'}
+          </Label>
+          <Input
+            id="username"
+            type="text"
+            placeholder={language === 'ar' ? 'أدخل اسم المستخدم' : 'Enter your username'}
+            value={formData.username}
+            onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+          />
+          <p className="text-xs text-muted-foreground">
+            {language === 'ar' ? 'اسم المستخدم الفريد الخاص بك' : 'Your unique seller username'}
+          </p>
+        </div>
+
         <div className="space-y-2">
           <Label htmlFor="name_en">
             {language === 'ar' ? 'اسم المتجر (إنجليزي)' : 'Store Name (English)'}
@@ -178,6 +206,45 @@ const CreateStore = () => {
             value={formData.description_ar}
             onChange={(e) => setFormData({ ...formData, description_ar: e.target.value })}
             rows={4}
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="email">
+            {language === 'ar' ? 'البريد الإلكتروني' : 'Email Address'}
+          </Label>
+          <Input
+            id="email"
+            type="email"
+            placeholder={language === 'ar' ? 'أدخل بريدك الإلكتروني' : 'Enter your email address'}
+            value={formData.email}
+            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="contact_number">
+            {language === 'ar' ? 'رقم الاتصال' : 'Contact Number'}
+          </Label>
+          <Input
+            id="contact_number"
+            type="tel"
+            placeholder={language === 'ar' ? 'أدخل رقم الاتصال' : 'Enter your contact number'}
+            value={formData.contact_number}
+            onChange={(e) => setFormData({ ...formData, contact_number: e.target.value })}
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="address">
+            {language === 'ar' ? 'العنوان' : 'Address'}
+          </Label>
+          <Textarea
+            id="address"
+            placeholder={language === 'ar' ? 'أدخل عنوانك' : 'Enter your address'}
+            value={formData.address}
+            onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+            rows={3}
           />
         </div>
 

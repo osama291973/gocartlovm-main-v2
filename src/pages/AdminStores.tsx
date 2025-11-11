@@ -26,7 +26,7 @@ const AdminStores = () => {
     queryFn: async () => {
       const { data, error } = await (supabase as any)
         .from('stores')
-        .select(`id, owner_id, slug, status, created_at, logo_url, translations:store_translations(name, description, language_code), application:seller_applications(status)`);
+        .select(`id, owner_id, slug, status, created_at, logo_url, translations:store_translations(name, description, language_code), application:seller_applications(status, username, email, contact_number, address)`);
       if (error) throw error;
       return data;
     },
@@ -217,9 +217,14 @@ const AdminStores = () => {
                           <h3 className="text-xl font-bold mb-1">
                             {en?.name || ar?.name || store.slug}
                           </h3>
-                          <p className="text-sm text-gray-500">
+                          <p className="text-sm text-gray-500 mb-1">
                             {store.slug}
                           </p>
+                          {store.application?.[0]?.username && (
+                            <p className="text-xs text-gray-600">
+                              👤 {store.application[0].username}
+                            </p>
+                          )}
                         </div>
                         {/* Status Badge (top right) */}
                         <span
@@ -246,22 +251,22 @@ const AdminStores = () => {
 
                     {/* Store Details Section (Address, Phone, Email) */}
                     <div className="space-y-2 text-sm text-gray-600 mb-4">
-                      {/* Address - placeholder for future field */}
+                      {/* Address */}
                       <div className="flex items-start gap-2">
-                        <span className="text-gray-400 min-w-max">📍</span>
-                        <span className="text-gray-400">Address will be added from seller_applications</span>
+                        <span className="text-gray-600 min-w-max">📍</span>
+                        <span>{store.application?.[0]?.address || 'No address provided'}</span>
                       </div>
 
-                      {/* Phone - placeholder for future field */}
+                      {/* Phone */}
                       <div className="flex items-start gap-2">
-                        <span className="text-gray-400 min-w-max">📞</span>
-                        <span className="text-gray-400">Phone will be added from seller_applications</span>
+                        <span className="text-gray-600 min-w-max">📞</span>
+                        <span>{store.application?.[0]?.contact_number || 'No phone provided'}</span>
                       </div>
 
-                      {/* Email - placeholder for future field */}
+                      {/* Email */}
                       <div className="flex items-start gap-2">
-                        <span className="text-gray-400 min-w-max">✉️</span>
-                        <span className="text-gray-400">Email will be added from seller_applications</span>
+                        <span className="text-gray-600 min-w-max">✉️</span>
+                        <span>{store.application?.[0]?.email || 'No email provided'}</span>
                       </div>
                     </div>
 
