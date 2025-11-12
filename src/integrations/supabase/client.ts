@@ -29,3 +29,6 @@ export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABL
     autoRefreshToken: true,
   }
 });
+
+// Temporarily expose supabase client to window for console testing.
+// NOTE: temporary test exposure removed. Do NOT expose the supabase client on window in production.
