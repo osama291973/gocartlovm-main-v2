@@ -15,8 +15,8 @@ const DEFAULT_SUPABASE_PUBLISHABLE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.e
 // Vite exposes env vars via import.meta.env. Typescript may complain
 // about these fields if not declared; Vite's typing should cover
 // them. We also support process.env as a fallback for other runtimes.
-const SUPABASE_URL = (import.meta as any).env?.VITE_SUPABASE_URL || process.env?.VITE_SUPABASE_URL || DEFAULT_SUPABASE_URL;
-const SUPABASE_PUBLISHABLE_KEY = (import.meta as any).env?.VITE_SUPABASE_PUBLISHABLE_KEY || process.env?.VITE_SUPABASE_PUBLISHABLE_KEY || DEFAULT_SUPABASE_PUBLISHABLE_KEY;
+const SUPABASE_URL = (import.meta as any).env?.VITE_SUPABASE_URL || (typeof process !== 'undefined' ? process.env?.VITE_SUPABASE_URL : undefined) || DEFAULT_SUPABASE_URL;
+const SUPABASE_PUBLISHABLE_KEY = (import.meta as any).env?.VITE_SUPABASE_PUBLISHABLE_KEY || (typeof process !== 'undefined' ? process.env?.VITE_SUPABASE_PUBLISHABLE_KEY : undefined) || DEFAULT_SUPABASE_PUBLISHABLE_KEY;
 
 // Example import:
 // import { supabase } from "@/integrations/supabase/client";

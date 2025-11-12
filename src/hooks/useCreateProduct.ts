@@ -93,6 +93,8 @@ export function useCreateProduct(): UseCreateProductResult {
               gallery_urls: product.gallery_urls || null,
               has_variants: product.has_variants ?? false,
               base_price: product.base_price || null,
+              // include product-level description if provided
+              description: product.description ?? null,
             } as any,
           ] as any)
           .select('id')
@@ -119,8 +121,15 @@ export function useCreateProduct(): UseCreateProductResult {
         const rpcResult = await callTranslateRpc(translationPayloads);
 
         if (!rpcResult.success) {
-          // Log warning but don't fail — product was created, translations might just have had an issue
-          console.warn('Translation upsert warning:', rpcResult.error);
+          // If RPC upsert failed, treat as an error so frontend can surface it and avoid silent failures
+          console.error('Translation upsert failed:', rpcResult.error);
+          // Optionally: you could delete the created product here to keep DB consistent.
+          // For now return failure so caller knows translations failed.
+          setIsLoading(false);
+          return {
+            success: false,
+            error: rpcResult.error || 'Translation upsert failed',
+          };
         }
 
         setIsLoading(false);

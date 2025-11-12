@@ -3,6 +3,8 @@ import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useOutletContext } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useCreateProduct } from '@/hooks/useCreateProduct';
+import { useTranslationMutations } from '@/hooks/useTranslationMutations';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -31,6 +33,10 @@ const AddProductPage = () => {
   const { toast } = useToast();
   const { language } = useLanguage();
   const isRTL = language === 'ar';
+  
+  // Hooks
+  const { createProduct, isLoading: isCreatingProduct, error: createError } = useCreateProduct();
+  const { upsertTranslations } = useTranslationMutations();
 
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -44,7 +50,53 @@ const AddProductPage = () => {
     originalPrice: '',
     stock: '',
     categoryId: '',
+    description: '',
+    enName: '',
+    enDescription: '',
+    arName: '',
+    arDescription: '',
   });
+
+  // Show the other-language translation inputs only when seller requests it
+  const [showOtherTranslations, setShowOtherTranslations] = useState(false);
+  // Placeholder for future auto-translate option (Edge Function)
+  const [autoTranslate, setAutoTranslate] = useState(false);
+
+  // Simple slugify helper and uniqueness checker to avoid duplicate-slug errors
+  const slugify = (text: string) =>
+    (text || '')
+      .toString()
+      .toLowerCase()
+      .trim()
+      .replace(/\s+/g, '-') // replace spaces with -
+      .replace(/[^a-z0-9\-]/g, '') // remove invalid chars
+      .replace(/\-+/g, '-');
+
+  const ensureUniqueSlug = async (desired: string) => {
+    const base = slugify(desired || 'product');
+    let attempt = base;
+    let i = 1;
+    try {
+      while (true) {
+        const { data, error } = await (supabase as any)
+          .from('products')
+          .select('id')
+          .eq('slug', attempt)
+          .limit(1);
+        if (error) {
+          console.error('Error checking slug uniqueness', error);
+          break;
+        }
+        if (!data || data.length === 0) return attempt;
+        attempt = `${base}-${i++}`;
+        // safety cap
+        if (i > 100) return `${base}-${Date.now()}`;
+      }
+    } catch (e) {
+      console.error('ensureUniqueSlug failed', e);
+    }
+    return `${base}-${Date.now()}`;
+  };
 
   const [editingId, setEditingId] = useState<string | null>(null);
   const [searchParams] = useSearchParams();
@@ -72,6 +124,11 @@ const AddProductPage = () => {
               originalPrice: String(data.original_price || ''),
               stock: String(data.stock || ''),
               categoryId: data.category_id || '',
+              description: data.description || '',
+              enName: '',
+              enDescription: '',
+              arName: '',
+              arDescription: '',
             });
             if (data.gallery_urls && Array.isArray(data.gallery_urls)) {
               setUploadedImages(data.gallery_urls.filter(Boolean));
@@ -168,22 +225,26 @@ const AddProductPage = () => {
       return;
     }
 
+    // Require only the primary language field (seller UI language).
+    // Other language is optional and can be added via the "Add translation" toggle.
+    const primaryLang = language === 'ar' ? 'ar' : 'en';
+    if (primaryLang === 'en' && !formData.enName) {
+      toast({ title: 'Error', description: 'Please enter the English product name', variant: 'destructive' });
+      setLoading(false);
+      return;
+    }
+    if (primaryLang === 'ar' && !formData.arName) {
+      toast({ title: 'Error', description: 'Please enter the Arabic product name', variant: 'destructive' });
+      setLoading(false);
+      return;
+    }
+
     setLoading(true);
 
     try {
       if (editingId) {
-        const { error } = await (supabase as any).from('products').update({
-        store_id: selectedStore.id,
-        category_id: formData.categoryId || null,
-        slug: formData.slug || 'product-' + Date.now(),
-        price: parseFloat(formData.price) || 0,
-        original_price: parseFloat(formData.originalPrice) || 0,
-        stock: parseInt(formData.stock) || 0,
-          gallery_urls: uploadedImages.length > 0 ? uploadedImages : null,
-        }).eq('id', editingId);
-        if (error) throw error;
-      } else {
-        const { error } = await (supabase as any).from('products').insert({
+        // For edit: update product and translations separately
+        const { error: updateError } = await (supabase as any).from('products').update({
           store_id: selectedStore.id,
           category_id: formData.categoryId || null,
           slug: formData.slug || 'product-' + Date.now(),
@@ -191,19 +252,94 @@ const AddProductPage = () => {
           original_price: parseFloat(formData.originalPrice) || 0,
           stock: parseInt(formData.stock) || 0,
           gallery_urls: uploadedImages.length > 0 ? uploadedImages : null,
-        });
-        if (error) throw error;
+          // persist the product-level description (canonical/fallback)
+          description: formData.description || null,
+        }).eq('id', editingId);
+        
+        if (updateError) throw updateError;
+
+        // Update translations via upsert
+        const translations = [];
+        if (formData.enName) {
+          translations.push({
+            product_id: editingId,
+            language_code: 'en',
+            name: formData.enName,
+            description: formData.enDescription || null,
+          });
+        }
+        if (formData.arName) {
+          translations.push({
+            product_id: editingId,
+            language_code: 'ar',
+            name: formData.arName,
+            description: formData.arDescription || null,
+          });
+        }
+
+        if (translations.length > 0) {
+          const upsertRes: any = await upsertTranslations(translations as any);
+          if (upsertRes?.error) {
+            throw upsertRes.error;
+          }
+        }
+
+        toast({ title: 'Success', description: 'Product updated successfully!' });
+      } else {
+        // For create: build translations array then ensure a unique slug before creating
+        const translationsToCreate: any[] = [];
+        if (formData.enName) {
+          translationsToCreate.push({ language_code: 'en', name: formData.enName, description: formData.enDescription || null });
+        }
+        if (formData.arName) {
+          translationsToCreate.push({ language_code: 'ar', name: formData.arName, description: formData.arDescription || null });
+        }
+
+        // DEBUG: log translations payload so we can confirm Arabic payload is present
+        // (temporary — remove after troubleshooting)
+        // eslint-disable-next-line no-console
+        console.debug('translationsToCreate (submit):', translationsToCreate);
+
+        // Determine desired slug (explicit slug or derived from primary translation)
+        const desiredSlug = (formData.slug && formData.slug.trim()) || (formData.enName || formData.arName || 'product');
+        const uniqueSlug = await ensureUniqueSlug(desiredSlug);
+
+        const result = await createProduct(
+          {
+            store_id: selectedStore.id,
+            category_id: formData.categoryId || null,
+            slug: uniqueSlug,
+            price: parseFloat(formData.price) || 0,
+            original_price: parseFloat(formData.originalPrice) || 0,
+            stock: parseInt(formData.stock) || 0,
+            gallery_urls: uploadedImages.length > 0 ? uploadedImages : null,
+            // include the product-level description so it's stored as canonical/fallback
+            description: formData.description || (formData.enDescription || formData.arDescription) || null,
+          },
+          translationsToCreate
+        );
+
+        if (!result || !result.product_id) {
+          throw new Error(result?.error || 'Failed to create product');
+        }
+
+        toast({ title: 'Success', description: 'Product added successfully with translations!' });
       }
 
-      toast({ title: 'Success', description: editingId ? 'Product updated successfully!' : 'Product added successfully!' });
-      setFormData({ slug: '', price: '', originalPrice: '', stock: '', categoryId: '' });
+  setFormData({ slug: '', price: '', originalPrice: '', stock: '', categoryId: '', description: '', enName: '', enDescription: '', arName: '', arDescription: '' });
       setUploadedImages([]);
+      
       if (editingId) {
-        // after editing, go back to manage products
         navigate('/seller/manage-product');
       }
     } catch (err: any) {
-      toast({ title: 'Error', description: err.message, variant: 'destructive' });
+      console.error('Submit error:', err);
+      const msg = err?.message || '';
+      if (msg.includes('duplicate key') || msg.includes('products_slug_key') || err?.code === '23505') {
+        toast({ title: 'Error', description: 'Product slug already exists. Please change the Product Name/Slug to be unique.', variant: 'destructive' });
+      } else {
+        toast({ title: 'Error', description: msg || 'Failed to save product', variant: 'destructive' });
+      }
     } finally {
       setLoading(false);
     }
@@ -293,6 +429,9 @@ const AddProductPage = () => {
             <div>
               <label className={`block text-sm font-medium text-gray-700 mb-2 ${isRTL ? 'text-right' : 'text-left'}`}>Description</label>
               <textarea
+                name="description"
+                value={formData.description}
+                onChange={handleInputChange}
                 className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 rows={5}
                 placeholder="Enter product description"
@@ -365,15 +504,149 @@ const AddProductPage = () => {
               />
             </div>
 
+            {/* Translation Section: show primary language by default, other language optional */}
+            <div className="border-t pt-6">
+              <h3 className={`text-base font-semibold text-gray-900 mb-4 ${isRTL ? 'text-right' : 'text-left'}`}>Translations</h3>
+
+              {/* Primary language input (based on current UI language) */}
+              {language === 'ar' ? (
+                <div className="space-y-4">
+                  <div>
+                    <label className={`block text-sm font-medium text-gray-700 mb-2 ${isRTL ? 'text-right' : 'text-left'}`}>Product Name (AR) *</label>
+                    <Input
+                      placeholder="أدخل اسم المنتج بالعربية"
+                      name="arName"
+                      value={formData.arName}
+                      onChange={handleInputChange}
+                      required
+                      dir="rtl"
+                      className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                  </div>
+                  <div>
+                    <label className={`block text-sm font-medium text-gray-700 mb-2 ${isRTL ? 'text-right' : 'text-left'}`}>Description (AR)</label>
+                    <textarea
+                      className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      rows={4}
+                      placeholder="أدخل وصف المنتج بالعربية"
+                      name="arDescription"
+                      value={formData.arDescription}
+                      onChange={handleInputChange}
+                      dir="rtl"
+                    />
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  <div>
+                    <label className={`block text-sm font-medium text-gray-700 mb-2 ${isRTL ? 'text-right' : 'text-left'}`}>Product Name (EN) *</label>
+                    <Input
+                      placeholder="Enter English product name"
+                      name="enName"
+                      value={formData.enName}
+                      onChange={handleInputChange}
+                      required
+                      dir="ltr"
+                      className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                  </div>
+                  <div>
+                    <label className={`block text-sm font-medium text-gray-700 mb-2 ${isRTL ? 'text-right' : 'text-left'}`}>Description (EN)</label>
+                    <textarea
+                      className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      rows={4}
+                      placeholder="Enter English product description"
+                      name="enDescription"
+                      value={formData.enDescription}
+                      onChange={handleInputChange}
+                      dir="ltr"
+                    />
+                  </div>
+                </div>
+              )}
+
+              {/* Toggle to add other language manually */}
+              <div className="mt-4">
+                <button
+                  type="button"
+                  onClick={() => setShowOtherTranslations(!showOtherTranslations)}
+                  className="text-sm text-blue-600 hover:underline"
+                >
+                  {showOtherTranslations ? 'Hide other language translation' : 'Add translation in the other language (optional)'}
+                </button>
+
+                {/* Future auto-translate option - visible when seller chooses to add other language */}
+                {showOtherTranslations && (
+                  <div className="mt-3 space-y-4">
+                    <div className="text-xs text-gray-500">You can enter the translation manually or enable auto-translate (server-side) later.</div>
+                    {/* Other language inputs */}
+                    {language === 'ar' ? (
+                      <>
+                        <div>
+                          <label className={`block text-sm font-medium text-gray-700 mb-2 ${isRTL ? 'text-right' : 'text-left'}`}>Product Name (EN)</label>
+                          <Input
+                            placeholder="Enter English product name"
+                            name="enName"
+                            value={formData.enName}
+                            onChange={handleInputChange}
+                            dir="ltr"
+                            className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          />
+                        </div>
+                        <div>
+                          <label className={`block text-sm font-medium text-gray-700 mb-2 ${isRTL ? 'text-right' : 'text-left'}`}>Description (EN)</label>
+                          <textarea
+                            className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            rows={4}
+                            placeholder="Enter English product description"
+                            name="enDescription"
+                            value={formData.enDescription}
+                            onChange={handleInputChange}
+                            dir="ltr"
+                          />
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <div>
+                          <label className={`block text-sm font-medium text-gray-700 mb-2 ${isRTL ? 'text-right' : 'text-left'}`}>Product Name (AR)</label>
+                          <Input
+                            placeholder="أدخل اسم المنتج بالعربية"
+                            name="arName"
+                            value={formData.arName}
+                            onChange={handleInputChange}
+                            dir="rtl"
+                            className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          />
+                        </div>
+                        <div>
+                          <label className={`block text-sm font-medium text-gray-700 mb-2 ${isRTL ? 'text-right' : 'text-left'}`}>Description (AR)</label>
+                          <textarea
+                            className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            rows={4}
+                            placeholder="أدخل وصف المنتج بالعربية"
+                            name="arDescription"
+                            value={formData.arDescription}
+                            onChange={handleInputChange}
+                            dir="rtl"
+                          />
+                        </div>
+                      </>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
+
             {/* Submit Button */}
             <Button 
               type="submit" 
-              disabled={loading} 
+              disabled={loading || isCreatingProduct} 
               className={`bg-gray-900 hover:bg-gray-800 text-white font-medium py-2.5 px-6 rounded-lg inline-flex items-center ${isRTL ? 'flex-row-reverse' : ''}`}
             >
               <Plus className="h-4 w-4" />
               <span className={isRTL ? 'mr-2' : 'ml-2'}>
-                {loading ? 'Adding Product...' : 'Add Product'}
+                {loading || isCreatingProduct ? 'Adding Product...' : 'Add Product'}
               </span>
             </Button>
           </form>
