@@ -18,9 +18,12 @@ const Shop = () => {
     },
   });
 
-  const getTranslation = (translations: any[], fallback: string) => {
+  const getTranslation = (translations: any[] | undefined, fallback: string, product?: any) => {
     const translation = translations?.find((t) => t.language_code === language);
-    return translation?.name || fallback;
+    if (translation?.name) return translation.name;
+    // fallback to product name fields if available
+    if (product) return product.name || product.slug || fallback;
+    return fallback;
   };
 
   return (
@@ -37,21 +40,30 @@ const Shop = () => {
           ? Array.from({ length: 12 }).map((_, i) => (
               <Skeleton key={i} className="h-96 rounded-lg" />
             ))
-          : products?.map((product) => (
-              <ProductCard
-                key={product.id}
-                id={product.id}
-                slug={product.slug}
-                name={getTranslation(product.product_translations, 'Product')}
-                price={Number(product.price)}
-                originalPrice={product.original_price ? Number(product.original_price) : undefined}
-                imageUrl={product.image_url}
-                rating={Number(product.rating)}
-                reviewsCount={product.reviews_count}
-                stock={product.stock}
-                isFeatured={product.is_featured}
-              />
-            ))}
+            : products?.map((product: any) => {
+              // prefer explicit image_url, otherwise use first gallery_urls entry
+              const imageFromGallery = product.gallery_urls && Array.isArray(product.gallery_urls) && product.gallery_urls.length > 0
+                ? product.gallery_urls[0]
+                : null;
+              const imageUrl = product.image_url || imageFromGallery || undefined;
+              const name = getTranslation(product.product_translations, 'Product', product);
+
+              return (
+                <ProductCard
+                  key={product.id}
+                  id={product.id}
+                  slug={product.slug}
+                  name={name}
+                  price={Number(product.price)}
+                  originalPrice={product.original_price ? Number(product.original_price) : undefined}
+                  imageUrl={imageUrl}
+                  rating={Number(product.rating)}
+                  reviewsCount={product.reviews_count}
+                  stock={product.stock}
+                  isFeatured={product.is_featured}
+                />
+              );
+            })}
       </div>
     </div>
   );

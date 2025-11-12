@@ -1,5 +1,6 @@
-import { useOutletContext } from 'react-router-dom';
+import { useOutletContext, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -18,6 +19,8 @@ interface ManageProductPageProps {
 const ManageProductPage = () => {
   const context = useOutletContext<ManageProductPageProps>();
   const selectedStore = context?.selectedStore;
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   // Fetch store products
   const { data: products = [] } = useQuery({
@@ -74,15 +77,15 @@ const ManageProductPage = () => {
                     <tr key={product.id} className="border-b hover:bg-muted/50 transition-colors">
                       <td className="py-3 px-4">
                         <div className="flex items-center gap-3">
-                          {product.image_url && (
+                          {(product.image_url || (product.gallery_urls && product.gallery_urls[0])) && (
                             <img
-                              src={product.image_url}
+                              src={product.image_url || (product.gallery_urls && product.gallery_urls[0])}
                               alt={product.slug}
                               className="h-10 w-10 rounded object-cover"
                             />
                           )}
                           <div>
-                            <div className="font-medium">{product.slug}</div>
+                            <div className="font-medium">{product.name || product.slug}</div>
                             <div className="text-xs text-muted-foreground">{product.id.substring(0, 8)}</div>
                           </div>
                         </div>
@@ -121,13 +124,32 @@ const ManageProductPage = () => {
                       </td>
                       <td className="py-3 px-4">
                         <div className="flex items-center gap-2">
-                          <Button size="sm" variant="outline">
+                          <Button size="sm" variant="outline" onClick={() => navigate(`/seller/add-product?id=${product.id}`)}>
                             <Edit2 className="h-4 w-4" />
                           </Button>
-                          <Button size="sm" variant="outline">
+                          <Button size="sm" variant="outline" onClick={() => navigate(`/product/${product.slug}`)}>
                             <Eye className="h-4 w-4" />
                           </Button>
-                          <Button size="sm" variant="outline" className="text-red-600 hover:text-red-700">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="text-red-600 hover:text-red-700"
+                            onClick={async () => {
+                              if (!confirm('Delete this product?')) return;
+                              try {
+                                const { error } = await (supabase as any)
+                                  .from('products')
+                                  .delete()
+                                  .eq('id', product.id);
+                                if (error) throw error;
+                                // invalidate query to refresh list
+                                queryClient.invalidateQueries({ queryKey: ['store-products', selectedStore?.id] });
+                              } catch (err: any) {
+                                console.error('Delete product error', err.message || err);
+                                alert('Failed to delete product');
+                              }
+                            }}
+                          >
                             <Trash2 className="h-4 w-4" />
                           </Button>
                         </div>

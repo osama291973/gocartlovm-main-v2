@@ -32,9 +32,11 @@ const ProductDetail = () => {
     },
   });
 
-  const getTranslation = (translations: any[], fallback: string) => {
+  const getTranslation = (translations: any[] | undefined, fallback: string, product?: any) => {
     const translation = translations?.find((t) => t.language_code === language);
-    return translation?.name || fallback;
+    if (translation?.name) return translation.name;
+    if (product) return product.name || product.slug || fallback;
+    return fallback;
   };
 
   if (isLoading) {
@@ -62,7 +64,7 @@ const ProductDetail = () => {
     );
   }
 
-  const productName = getTranslation(product.product_translations, 'Product');
+  const productName = getTranslation(product.product_translations, 'Product', product);
   const discount = product.original_price
     ? Math.round(((product.original_price - product.price) / product.original_price) * 100)
     : 0;
@@ -82,9 +84,9 @@ const ProductDetail = () => {
         {/* Product Image */}
         <div className="space-y-4">
           <div className="aspect-square rounded-lg overflow-hidden bg-muted/30">
-            {product.image_url ? (
+            {(product.image_url || (product.gallery_urls && product.gallery_urls[0])) ? (
               <img
-                src={product.image_url}
+                src={product.image_url || (product.gallery_urls && product.gallery_urls[0])}
                 alt={productName}
                 className="w-full h-full object-cover"
               />
