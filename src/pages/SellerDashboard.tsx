@@ -22,13 +22,40 @@ const SellerDashboard = () => {
   const { data: stores, isLoading: storesLoading } = useQuery({
     queryKey: ['seller-stores', user?.id],
     queryFn: async () => {
-      const { data, error } = await supabase
+      if (!user?.id) return [];
+
+      // First try fetching stores where the current user is the owner
+      let { data: dataStores, error } = await supabase
         .from('stores')
-        .select('*, products(count)')
-        .eq('owner_id', user?.id);
-      
+        .select('*, products(id)')
+        .eq('owner_id', user.id);
+
       if (error) throw error;
-      return data;
+
+      // If no stores found by owner_id, fall back to stores linked via seller_applications
+      if (!dataStores || dataStores.length === 0) {
+        const { data: apps, error: appsErr } = await supabase
+          .from('seller_applications')
+          .select('store_id')
+          .eq('user_id', user.id);
+
+        if (appsErr) throw appsErr;
+
+        const storeIds = (apps || []).map((a: any) => a.store_id).filter(Boolean);
+
+        if (storeIds.length > 0) {
+          const { data: storesByApp, error: storesErr } = await supabase
+            .from('stores')
+            .select('*, products(id)')
+            .in('id', storeIds);
+
+          if (storesErr) throw storesErr;
+
+          dataStores = storesByApp || [];
+        }
+      }
+
+      return dataStores || [];
     },
     enabled: !!user,
   });
@@ -46,7 +73,7 @@ const SellerDashboard = () => {
     );
   }
 
-  const totalProducts = stores?.reduce((acc, store: any) => acc + (store.products?.[0]?.count || 0), 0) || 0;
+  const totalProducts = stores?.reduce((acc, store: any) => acc + (store.products?.length || 0), 0) || 0;
 
   return (
     <div className="container mx-auto px-4 py-8">

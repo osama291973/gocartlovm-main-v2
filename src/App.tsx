@@ -13,7 +13,11 @@ import Stores from "./pages/Stores";
 import Cart from "./pages/Cart";
 import Account from "./pages/Account";
 import Auth from "./pages/Auth";
-import SellerDashboard from "./pages/SellerDashboard";
+import SellerLayout from "./pages/SellerLayout";
+import SellerDashboardPage from "./pages/SellerDashboardPage";
+import AddProductPage from "./pages/AddProductPage";
+import ManageProductPage from "./pages/ManageProductPage";
+import OrdersPage from "./pages/OrdersPage";
 import CreateStore from "./pages/CreateStore";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminTranslations from "./pages/AdminTranslations";
@@ -44,7 +48,16 @@ const App = () => (
               </Route>
               <Route path="/auth" element={<Auth />} />
               <Route path="/create-store" element={<CreateStore />} />
-              <Route path="/seller" element={<SellerDashboard />} />
+              
+              {/* Seller Routes with Layout */}
+              <Route path="/seller" element={<SellerLayout />}>
+                <Route path="dashboard" element={<SellerDashboardPage />} />
+                <Route path="add-product" element={<AddProductPage />} />
+                <Route path="manage-product" element={<ManageProductPage />} />
+                <Route path="orders" element={<OrdersPage />} />
+                <Route index element={<SellerDashboardPage />} />
+              </Route>
+              
               <Route path="/admin" element={<AdminDashboard />} />
               <Route path="/admin/translations" element={<AdminTranslations />} />
               <Route path="/admin/seller-applications" element={<AdminSellerApplications />} />
