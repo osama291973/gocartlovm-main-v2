@@ -276,16 +276,19 @@ const AddProductPage = () => {
 
       if (editingId) {
         // For edit: just update product and translations
-        const { error: updateError } = await (supabase as any).from('products').update({
-          store_id: selectedStore.id,
-          category_id: formData.categoryId || null,
-          slug: formData.slug || 'product-' + Date.now(),
-          price: parseFloat(formData.price) || 0,
-          original_price: parseFloat(formData.originalPrice) || 0,
-          stock: parseInt(formData.stock) || 0,
-          gallery_urls: uploadedImages.length > 0 ? uploadedImages : null,
-          description: productDescription,
-        }).eq('id', editingId);
+        const { error: updateError } = await (supabase as any)
+          .from('products')
+          .update({
+            store_id: selectedStore.id,
+            category_id: formData.categoryId || null,
+            slug: formData.slug || 'product-' + Date.now(),
+            price: parseFloat(formData.price) || 0,
+            original_price: parseFloat(formData.originalPrice) || 0,
+            stock: parseInt(formData.stock) || 0,
+            gallery_urls: uploadedImages.length > 0 ? uploadedImages : null,
+            description: productDescription,
+          })
+          .eq('id', editingId);
         
         if (updateError) throw updateError;
 

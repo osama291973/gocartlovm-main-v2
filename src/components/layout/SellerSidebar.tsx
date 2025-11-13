@@ -1,184 +1,56 @@
+import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Store, Plus, Package, ShoppingCart, LogOut, ChevronDown } from 'lucide-react';
-import { useAuth } from '@/contexts/AuthContext';
+import { Store, Plus, Package, ShoppingCart } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { Button } from '@/components/ui/button';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-  DropdownMenuSeparator,
-} from '@/components/ui/dropdown-menu';
 
-interface Store {
-  id: string;
-  name: string | null;
-  slug: string;
-  logo_url: string | null;
-  owner_id: string;
-}
-
-interface SellerSidebarProps {
-  stores: Store[];
-  selectedStoreId: string | null;
-  onSelectStore: (storeId: string) => void;
-  isMobileOpen: boolean;
-  onMobileToggle: (open: boolean) => void;
-}
-
-const SellerSidebar = ({
-  stores,
-  selectedStoreId,
-  onSelectStore,
-  isMobileOpen,
-  onMobileToggle,
-}: SellerSidebarProps) => {
-  const { signOut } = useAuth();
+export function SellerSidebar() {
   const { t } = useLanguage();
   const location = useLocation();
 
-  const selectedStore = stores.find(s => s.id === selectedStoreId);
-
-  const isActive = (path: string) => location.pathname.includes(path);
-
-  const menuItems = [
-    { label: t('seller_nav.dashboard'), href: '/seller/dashboard', icon: Store },
-    { label: t('seller_nav.add_product'), href: '/seller/add-product', icon: Plus },
-    { label: t('seller_nav.manage_product'), href: '/seller/manage-product', icon: Package },
-    { label: t('seller_nav.orders'), href: '/seller/orders', icon: ShoppingCart },
+  const menu = [
+    { id: 'dashboard', href: '/seller', icon: Store, label: t('seller_nav.dashboard') ?? 'Dashboard' },
+    { id: 'add', href: '/seller/add-product', icon: Plus, label: t('seller_nav.add_product') ?? 'Add Product' },
+    { id: 'manage', href: '/seller/manage-product', icon: Package, label: t('seller_nav.manage_product') ?? 'Manage Product' },
+    { id: 'orders', href: '/seller/orders', icon: ShoppingCart, label: t('seller_nav.orders') ?? 'Orders' },
   ];
 
   return (
-    <>
-      {/* Mobile Overlay */}
-      {isMobileOpen && (
-        <div
-          className="fixed inset-0 bg-black/50 z-40 md:hidden"
-          onClick={() => onMobileToggle(false)}
-        />
-      )}
-
-      {/* Sidebar */}
-      <aside
-        className={`
-          fixed md:relative z-50 w-64 bg-white border-r min-h-screen flex flex-col
-          transition-transform duration-200 transform
-          ${isMobileOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
-        `}
-      >
-        {/* Logo / Brand */}
-        <div className="p-6 border-b">
-          <Link to="/" className="flex items-center gap-2">
-            <span className="text-2xl font-bold">
-              <span className="text-primary">go</span>
-              <span>cart</span>
-              <span className="text-accent">.</span>
-            </span>
-          </Link>
+    <aside className="w-56 bg-white border-r border-gray-200 flex flex-col h-screen">
+      {/* Sidebar Header with Brand */}
+      <div className="px-6 py-6 border-b border-gray-200">
+        <div className="flex items-center gap-2">
+          <div className="w-8 h-8 bg-gradient-to-br from-green-500 to-green-600 rounded-lg flex items-center justify-center text-white font-bold text-sm">
+            G
+          </div>
+          <span className="text-lg font-bold">
+            <span className="text-gray-800">Great</span><span className="text-green-600">Stack</span>
+          </span>
         </div>
+      </div>
 
-        {/* Store Selector */}
-        <div className="p-4 border-b">
-          {selectedStore && (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="w-full justify-between">
-                  <div className="flex items-center gap-2 flex-1 min-w-0">
-                    {selectedStore.logo_url && (
-                      <img
-                        src={selectedStore.logo_url}
-                        alt={selectedStore.slug}
-                        className="h-6 w-6 rounded object-cover flex-shrink-0"
-                      />
-                    )}
-                    <span className="truncate text-sm font-medium">
-                      {selectedStore.name || selectedStore.slug}
-                    </span>
-                  </div>
-                  <ChevronDown className="h-4 w-4 flex-shrink-0" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="start" className="w-56">
-                {stores.map(store => (
-                  <DropdownMenuItem
-                    key={store.id}
-                    onClick={() => {
-                      onSelectStore(store.id);
-                      onMobileToggle(false);
-                    }}
-                    className="cursor-pointer"
-                  >
-                    <div className="flex items-center gap-2 w-full">
-                      {store.logo_url && (
-                        <img
-                          src={store.logo_url}
-                          alt={store.slug}
-                          className="h-5 w-5 rounded object-cover"
-                        />
-                      )}
-                      <div>
-                        <div className="font-medium">{store.name || store.slug}</div>
-                        <div className="text-xs text-muted-foreground">{store.slug}</div>
-                      </div>
-                    </div>
-                  </DropdownMenuItem>
-                ))}
-                <DropdownMenuSeparator />
-                <DropdownMenuItem asChild>
-                  <Link to="/create-store">
-                    <Plus className="mr-2 h-4 w-4" />
-                    {t('seller_nav.create_store')}
-                  </Link>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          )}
-        </div>
-
-        {/* Navigation Menu */}
-        <nav className="flex-1 p-4 space-y-2">
-          {menuItems.map(item => {
-            const Icon = item.icon;
-            const active = isActive(item.href);
-
-            return (
-              <Link
-                key={item.href}
-                to={item.href}
-                onClick={() => onMobileToggle(false)}
-                className={`
-                  flex items-center gap-3 px-4 py-3 rounded-lg transition-colors
-                  ${active
-                    ? 'bg-primary/10 text-primary border-l-4 border-primary'
-                    : 'text-muted-foreground hover:bg-accent'
-                  }
-                `}
-              >
-                <Icon className="h-5 w-5" />
-                <span className="font-medium">{item.label}</span>
-              </Link>
-            );
-          })}
-        </nav>
-
-        {/* Logout Button */}
-        <div className="p-4 border-t">
-          <Button
-            onClick={() => {
-              signOut();
-              onMobileToggle(false);
-            }}
-            variant="outline"
-            className="w-full justify-start"
-          >
-            <LogOut className="mr-2 h-4 w-4" />
-            {t('seller_nav.logout')}
-          </Button>
-        </div>
-      </aside>
-    </>
+      {/* Navigation Menu */}
+      <nav className="flex-1 px-4 py-6 space-y-2">
+        {menu.map((m) => {
+          const Icon = m.icon;
+          const isActive = location.pathname === m.href;
+          return (
+            <Link
+              key={m.id}
+              to={m.href}
+              className={`flex items-center gap-3 px-4 py-2.5 rounded-md transition-colors font-medium text-sm ${
+                isActive
+                  ? 'bg-gray-100 text-gray-900 border-l-4 border-green-500'
+                  : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+              }`}
+            >
+              <Icon size={18} />
+              <span>{m.label}</span>
+            </Link>
+          );
+        })}
+      </nav>
+    </aside>
   );
-};
+}
 
 export default SellerSidebar;
