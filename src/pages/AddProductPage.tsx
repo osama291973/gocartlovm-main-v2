@@ -31,7 +31,7 @@ const AddProductPage = () => {
   const context = useOutletContext<AddProductPageProps>();
   const selectedStore = context?.selectedStore;
   const { toast } = useToast();
-  const { language } = useLanguage();
+  const { language, t } = useLanguage();
   const isRTL = language === 'ar';
   
   // Hooks
@@ -50,7 +50,7 @@ const AddProductPage = () => {
     originalPrice: '',
     stock: '',
     categoryId: '',
-    description: '',
+    description: '', // Generic description field (will be mapped to primary language)
     enName: '',
     enDescription: '',
     arName: '',
@@ -225,25 +225,57 @@ const AddProductPage = () => {
       return;
     }
 
-    // Require only the primary language field (seller UI language).
-    // Other language is optional and can be added via the "Add translation" toggle.
+    // Validate primary language input only
     const primaryLang = language === 'ar' ? 'ar' : 'en';
     if (primaryLang === 'en' && !formData.enName) {
-      toast({ title: 'Error', description: 'Please enter the English product name', variant: 'destructive' });
-      setLoading(false);
+      toast({ title: 'Error', description: t('product_form.error.product_name_required'), variant: 'destructive' });
       return;
     }
     if (primaryLang === 'ar' && !formData.arName) {
-      toast({ title: 'Error', description: 'Please enter the Arabic product name', variant: 'destructive' });
-      setLoading(false);
+      toast({ title: 'Error', description: t('product_form.error.product_name_required'), variant: 'destructive' });
       return;
     }
 
     setLoading(true);
 
     try {
+      // Determine if user entered in English or Arabic
+      const isEnglishInput = !!formData.enName;
+      const isArabicInput = !!formData.arName;
+
+      // Build translations array - always include both languages
+      let translationsToCreate: any[] = [];
+
+      if (isEnglishInput) {
+        // User entered in English - add English translation
+        translationsToCreate.push({
+          language_code: 'en',
+          name: formData.enName,
+          description: formData.enDescription || null,
+        });
+      }
+
+      if (isArabicInput) {
+        // User entered in Arabic - add Arabic translation
+        translationsToCreate.push({
+          language_code: 'ar',
+          name: formData.arName,
+          description: formData.arDescription || null,
+        });
+      }
+
+      // Determine product description
+      const productDescription = formData.description || 
+        (language === 'ar' ? formData.arDescription : formData.enDescription) || 
+        null;
+
+      // Determine desired slug
+      const desiredSlug = (formData.slug && formData.slug.trim()) || 
+        (isEnglishInput ? formData.enName : formData.arName || 'product');
+      const uniqueSlug = await ensureUniqueSlug(desiredSlug);
+
       if (editingId) {
-        // For edit: update product and translations separately
+        // For edit: just update product and translations
         const { error: updateError } = await (supabase as any).from('products').update({
           store_id: selectedStore.id,
           category_id: formData.categoryId || null,
@@ -252,58 +284,24 @@ const AddProductPage = () => {
           original_price: parseFloat(formData.originalPrice) || 0,
           stock: parseInt(formData.stock) || 0,
           gallery_urls: uploadedImages.length > 0 ? uploadedImages : null,
-          // persist the product-level description (canonical/fallback)
-          description: formData.description || null,
+          description: productDescription,
         }).eq('id', editingId);
         
         if (updateError) throw updateError;
 
-        // Update translations via upsert
-        const translations = [];
-        if (formData.enName) {
-          translations.push({
-            product_id: editingId,
-            language_code: 'en',
-            name: formData.enName,
-            description: formData.enDescription || null,
-          });
-        }
-        if (formData.arName) {
-          translations.push({
-            product_id: editingId,
-            language_code: 'ar',
-            name: formData.arName,
-            description: formData.arDescription || null,
-          });
-        }
-
-        if (translations.length > 0) {
-          const upsertRes: any = await upsertTranslations(translations as any);
+        if (translationsToCreate.length > 0) {
+          const upsertRes: any = await upsertTranslations(translationsToCreate as any);
           if (upsertRes?.error) {
             throw upsertRes.error;
           }
         }
 
-        toast({ title: 'Success', description: 'Product updated successfully!' });
+        toast({ title: 'Success', description: t('product_form.success.updated') });
+        setFormData({ slug: '', price: '', originalPrice: '', stock: '', categoryId: '', description: '', enName: '', enDescription: '', arName: '', arDescription: '' });
+        setUploadedImages([]);
+        navigate('/seller/manage-product');
       } else {
-        // For create: build translations array then ensure a unique slug before creating
-        const translationsToCreate: any[] = [];
-        if (formData.enName) {
-          translationsToCreate.push({ language_code: 'en', name: formData.enName, description: formData.enDescription || null });
-        }
-        if (formData.arName) {
-          translationsToCreate.push({ language_code: 'ar', name: formData.arName, description: formData.arDescription || null });
-        }
-
-        // DEBUG: log translations payload so we can confirm Arabic payload is present
-        // (temporary — remove after troubleshooting)
-        // eslint-disable-next-line no-console
-        console.debug('translationsToCreate (submit):', translationsToCreate);
-
-        // Determine desired slug (explicit slug or derived from primary translation)
-        const desiredSlug = (formData.slug && formData.slug.trim()) || (formData.enName || formData.arName || 'product');
-        const uniqueSlug = await ensureUniqueSlug(desiredSlug);
-
+        // For create: first create product, then create translations (with auto-translation if needed)
         const result = await createProduct(
           {
             store_id: selectedStore.id,
@@ -313,8 +311,7 @@ const AddProductPage = () => {
             original_price: parseFloat(formData.originalPrice) || 0,
             stock: parseInt(formData.stock) || 0,
             gallery_urls: uploadedImages.length > 0 ? uploadedImages : null,
-            // include the product-level description so it's stored as canonical/fallback
-            description: formData.description || (formData.enDescription || formData.arDescription) || null,
+            description: productDescription,
           },
           translationsToCreate
         );
@@ -323,22 +320,17 @@ const AddProductPage = () => {
           throw new Error(result?.error || 'Failed to create product');
         }
 
-        toast({ title: 'Success', description: 'Product added successfully with translations!' });
-      }
-
-  setFormData({ slug: '', price: '', originalPrice: '', stock: '', categoryId: '', description: '', enName: '', enDescription: '', arName: '', arDescription: '' });
-      setUploadedImages([]);
-      
-      if (editingId) {
-        navigate('/seller/manage-product');
+        toast({ title: 'Success', description: t('product_form.success.created') });
+        setFormData({ slug: '', price: '', originalPrice: '', stock: '', categoryId: '', description: '', enName: '', enDescription: '', arName: '', arDescription: '' });
+        setUploadedImages([]);
       }
     } catch (err: any) {
       console.error('Submit error:', err);
       const msg = err?.message || '';
       if (msg.includes('duplicate key') || msg.includes('products_slug_key') || err?.code === '23505') {
-        toast({ title: 'Error', description: 'Product slug already exists. Please change the Product Name/Slug to be unique.', variant: 'destructive' });
+        toast({ title: 'Error', description: t('product_form.error.slug_exists'), variant: 'destructive' });
       } else {
-        toast({ title: 'Error', description: msg || 'Failed to save product', variant: 'destructive' });
+        toast({ title: 'Error', description: msg || t('product_form.error.save_failed'), variant: 'destructive' });
       }
     } finally {
       setLoading(false);
@@ -359,7 +351,7 @@ const AddProductPage = () => {
       <div className={`px-8 py-8 ${isRTL ? 'text-right ml-auto' : 'text-left'}`} style={{ maxWidth: '1280px' }}>
         {/* Product Image Section - Full Width */}
         <div className="mb-8">
-          <h2 className="text-lg font-semibold text-gray-900 mb-6">Product Image</h2>
+          <h2 className="text-lg font-semibold text-gray-900 mb-6">{t('product_image.title')}</h2>
           <div className="grid grid-cols-4 gap-6">
             {[0, 1, 2, 3].map(index => (
               <div key={index} className="flex flex-col items-center">
@@ -409,43 +401,72 @@ const AddProductPage = () => {
 
         {/* Product Information Section */}
         <div>
-          <h2 className="text-lg font-semibold text-gray-900 mb-6">Product Information</h2>
+          <h2 className="text-lg font-semibold text-gray-900 mb-6">{t('product_info.title')}</h2>
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Product Name */}
-            <div>
-              <label className={`block text-sm font-medium text-gray-700 mb-2 ${isRTL ? 'text-right' : 'text-left'}`}>Product Name *</label>
-              <Input
-                placeholder="Enter product name"
-                name="slug"
-                value={formData.slug}
-                onChange={handleInputChange}
-                required
-                dir={isRTL ? 'rtl' : 'ltr'}
-                className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
-            </div>
-
-            {/* Description */}
-            <div>
-              <label className={`block text-sm font-medium text-gray-700 mb-2 ${isRTL ? 'text-right' : 'text-left'}`}>Description</label>
-              <textarea
-                name="description"
-                value={formData.description}
-                onChange={handleInputChange}
-                className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                rows={5}
-                placeholder="Enter product description"
-                dir={isRTL ? 'rtl' : 'ltr'}
-              />
-            </div>
+            {/* Language-Specific Product Name & Description */}
+            {language === 'ar' ? (
+              <>
+                <div>
+                  <label className={`block text-sm font-medium text-gray-700 mb-2 text-right`}>{t('product_info.name.label')} {t('product_info.name.required')}</label>
+                  <Input
+                    placeholder={t('product_info.name.placeholder')}
+                    name="arName"
+                    value={formData.arName}
+                    onChange={handleInputChange}
+                    required
+                    dir="rtl"
+                    className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+                <div>
+                  <label className={`block text-sm font-medium text-gray-700 mb-2 text-right`}>{t('product_info.description.label')}</label>
+                  <textarea
+                    name="arDescription"
+                    value={formData.arDescription}
+                    onChange={handleInputChange}
+                    className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    rows={5}
+                    placeholder={t('product_info.description.placeholder')}
+                    dir="rtl"
+                  />
+                </div>
+              </>
+            ) : (
+              <>
+                <div>
+                  <label className={`block text-sm font-medium text-gray-700 mb-2`}>{t('product_info.name.label')} {t('product_info.name.required')}</label>
+                  <Input
+                    placeholder={t('product_info.name.placeholder')}
+                    name="enName"
+                    value={formData.enName}
+                    onChange={handleInputChange}
+                    required
+                    dir="ltr"
+                    className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+                <div>
+                  <label className={`block text-sm font-medium text-gray-700 mb-2`}>{t('product_info.description.label')}</label>
+                  <textarea
+                    name="enDescription"
+                    value={formData.enDescription}
+                    onChange={handleInputChange}
+                    className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    rows={5}
+                    placeholder={t('product_info.description.placeholder')}
+                    dir="ltr"
+                  />
+                </div>
+              </>
+            )}
 
             {/* Price and Offer Price */}
             <div className="grid grid-cols-2 gap-6">
               <div>
-                <label className={`block text-sm font-medium text-gray-700 mb-2 ${isRTL ? 'text-right' : 'text-left'}`}>Actual Price ($) *</label>
+                <label className={`block text-sm font-medium text-gray-700 mb-2 ${isRTL ? 'text-right' : 'text-left'}`}>{t('product_info.price.label')} {t('product_info.price.required')}</label>
                 <Input
                   type="number"
-                  placeholder="0.00"
+                  placeholder={t('product_info.price.placeholder')}
                   name="price"
                   value={formData.price}
                   onChange={handleInputChange}
@@ -456,10 +477,10 @@ const AddProductPage = () => {
                 />
               </div>
               <div>
-                <label className={`block text-sm font-medium text-gray-700 mb-2 ${isRTL ? 'text-right' : 'text-left'}`}>Offer Price ($)</label>
+                <label className={`block text-sm font-medium text-gray-700 mb-2 ${isRTL ? 'text-right' : 'text-left'}`}>{t('product_info.offer_price.label')}</label>
                 <Input
                   type="number"
-                  placeholder="0.00"
+                  placeholder={t('product_info.offer_price.placeholder')}
                   name="originalPrice"
                   value={formData.originalPrice}
                   onChange={handleInputChange}
@@ -472,7 +493,7 @@ const AddProductPage = () => {
 
             {/* Category */}
             <div>
-              <label className={`block text-sm font-medium text-gray-700 mb-2 ${isRTL ? 'text-right' : 'text-left'}`}>Select a category</label>
+              <label className={`block text-sm font-medium text-gray-700 mb-2 ${isRTL ? 'text-right' : 'text-left'}`}>{t('product_info.category.label')}</label>
               <select 
                 name="categoryId"
                 value={formData.categoryId}
@@ -480,7 +501,7 @@ const AddProductPage = () => {
                 dir={isRTL ? 'rtl' : 'ltr'}
                 className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
               >
-                <option value="">Choose Category</option>
+                <option value="">{t('product_info.category.placeholder')}</option>
                 {categories.map(cat => (
                   <option key={cat.id} value={cat.id}>
                     {cat.icon} {cat.slug.charAt(0).toUpperCase() + cat.slug.slice(1)}
@@ -491,10 +512,10 @@ const AddProductPage = () => {
 
             {/* Stock */}
             <div>
-              <label className={`block text-sm font-medium text-gray-700 mb-2 ${isRTL ? 'text-right' : 'text-left'}`}>Stock *</label>
+              <label className={`block text-sm font-medium text-gray-700 mb-2 ${isRTL ? 'text-right' : 'text-left'}`}>{t('product_info.stock.label')} {t('product_info.stock.required')}</label>
               <Input
                 type="number"
-                placeholder="0"
+                placeholder={t('product_info.stock.placeholder')}
                 name="stock"
                 value={formData.stock}
                 onChange={handleInputChange}
@@ -502,140 +523,6 @@ const AddProductPage = () => {
                 dir={isRTL ? 'rtl' : 'ltr'}
                 className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
-            </div>
-
-            {/* Translation Section: show primary language by default, other language optional */}
-            <div className="border-t pt-6">
-              <h3 className={`text-base font-semibold text-gray-900 mb-4 ${isRTL ? 'text-right' : 'text-left'}`}>Translations</h3>
-
-              {/* Primary language input (based on current UI language) */}
-              {language === 'ar' ? (
-                <div className="space-y-4">
-                  <div>
-                    <label className={`block text-sm font-medium text-gray-700 mb-2 ${isRTL ? 'text-right' : 'text-left'}`}>Product Name (AR) *</label>
-                    <Input
-                      placeholder="أدخل اسم المنتج بالعربية"
-                      name="arName"
-                      value={formData.arName}
-                      onChange={handleInputChange}
-                      required
-                      dir="rtl"
-                      className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    />
-                  </div>
-                  <div>
-                    <label className={`block text-sm font-medium text-gray-700 mb-2 ${isRTL ? 'text-right' : 'text-left'}`}>Description (AR)</label>
-                    <textarea
-                      className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      rows={4}
-                      placeholder="أدخل وصف المنتج بالعربية"
-                      name="arDescription"
-                      value={formData.arDescription}
-                      onChange={handleInputChange}
-                      dir="rtl"
-                    />
-                  </div>
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  <div>
-                    <label className={`block text-sm font-medium text-gray-700 mb-2 ${isRTL ? 'text-right' : 'text-left'}`}>Product Name (EN) *</label>
-                    <Input
-                      placeholder="Enter English product name"
-                      name="enName"
-                      value={formData.enName}
-                      onChange={handleInputChange}
-                      required
-                      dir="ltr"
-                      className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    />
-                  </div>
-                  <div>
-                    <label className={`block text-sm font-medium text-gray-700 mb-2 ${isRTL ? 'text-right' : 'text-left'}`}>Description (EN)</label>
-                    <textarea
-                      className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      rows={4}
-                      placeholder="Enter English product description"
-                      name="enDescription"
-                      value={formData.enDescription}
-                      onChange={handleInputChange}
-                      dir="ltr"
-                    />
-                  </div>
-                </div>
-              )}
-
-              {/* Toggle to add other language manually */}
-              <div className="mt-4">
-                <button
-                  type="button"
-                  onClick={() => setShowOtherTranslations(!showOtherTranslations)}
-                  className="text-sm text-blue-600 hover:underline"
-                >
-                  {showOtherTranslations ? 'Hide other language translation' : 'Add translation in the other language (optional)'}
-                </button>
-
-                {/* Future auto-translate option - visible when seller chooses to add other language */}
-                {showOtherTranslations && (
-                  <div className="mt-3 space-y-4">
-                    <div className="text-xs text-gray-500">You can enter the translation manually or enable auto-translate (server-side) later.</div>
-                    {/* Other language inputs */}
-                    {language === 'ar' ? (
-                      <>
-                        <div>
-                          <label className={`block text-sm font-medium text-gray-700 mb-2 ${isRTL ? 'text-right' : 'text-left'}`}>Product Name (EN)</label>
-                          <Input
-                            placeholder="Enter English product name"
-                            name="enName"
-                            value={formData.enName}
-                            onChange={handleInputChange}
-                            dir="ltr"
-                            className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                          />
-                        </div>
-                        <div>
-                          <label className={`block text-sm font-medium text-gray-700 mb-2 ${isRTL ? 'text-right' : 'text-left'}`}>Description (EN)</label>
-                          <textarea
-                            className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                            rows={4}
-                            placeholder="Enter English product description"
-                            name="enDescription"
-                            value={formData.enDescription}
-                            onChange={handleInputChange}
-                            dir="ltr"
-                          />
-                        </div>
-                      </>
-                    ) : (
-                      <>
-                        <div>
-                          <label className={`block text-sm font-medium text-gray-700 mb-2 ${isRTL ? 'text-right' : 'text-left'}`}>Product Name (AR)</label>
-                          <Input
-                            placeholder="أدخل اسم المنتج بالعربية"
-                            name="arName"
-                            value={formData.arName}
-                            onChange={handleInputChange}
-                            dir="rtl"
-                            className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                          />
-                        </div>
-                        <div>
-                          <label className={`block text-sm font-medium text-gray-700 mb-2 ${isRTL ? 'text-right' : 'text-left'}`}>Description (AR)</label>
-                          <textarea
-                            className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                            rows={4}
-                            placeholder="أدخل وصف المنتج بالعربية"
-                            name="arDescription"
-                            value={formData.arDescription}
-                            onChange={handleInputChange}
-                            dir="rtl"
-                          />
-                        </div>
-                      </>
-                    )}
-                  </div>
-                )}
-              </div>
             </div>
 
             {/* Submit Button */}
@@ -646,7 +533,7 @@ const AddProductPage = () => {
             >
               <Plus className="h-4 w-4" />
               <span className={isRTL ? 'mr-2' : 'ml-2'}>
-                {loading || isCreatingProduct ? 'Adding Product...' : 'Add Product'}
+                {loading || isCreatingProduct ? t('product_form.submit.loading') : t('product_form.submit.button')}
               </span>
             </Button>
           </form>

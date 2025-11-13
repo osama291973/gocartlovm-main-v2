@@ -1,8 +1,10 @@
 import { X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 const PromoBanner = () => {
+  const { t } = useLanguage();
   const [isVisible, setIsVisible] = useState(true);
 
   if (!isVisible) return null;
@@ -10,13 +12,13 @@ const PromoBanner = () => {
   return (
     <div className="relative bg-gradient-to-r from-[hsl(var(--promo-gradient-start))] to-[hsl(var(--promo-gradient-end))] text-white py-3">
       <div className="container mx-auto px-4 flex items-center justify-center gap-4">
-        <p className="text-sm font-medium">Get 20% OFF on Your First Order!</p>
+        <p className="text-sm font-medium">{t('promo_banner.message')}</p>
         <Button 
           size="sm" 
           variant="secondary"
           className="bg-white text-foreground hover:bg-white/90"
         >
-          Claim Offer
+          {t('promo_banner.claim_button')}
         </Button>
         <Button
           size="icon"

@@ -1,6 +1,7 @@
 import { Link, useLocation } from 'react-router-dom';
 import { Store, Plus, Package, ShoppingCart, LogOut, ChevronDown } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -34,6 +35,7 @@ const SellerSidebar = ({
   onMobileToggle,
 }: SellerSidebarProps) => {
   const { signOut } = useAuth();
+  const { t } = useLanguage();
   const location = useLocation();
 
   const selectedStore = stores.find(s => s.id === selectedStoreId);
@@ -41,10 +43,10 @@ const SellerSidebar = ({
   const isActive = (path: string) => location.pathname.includes(path);
 
   const menuItems = [
-    { label: 'Dashboard', href: '/seller/dashboard', icon: Store },
-    { label: 'Add Product', href: '/seller/add-product', icon: Plus },
-    { label: 'Manage Product', href: '/seller/manage-product', icon: Package },
-    { label: 'Orders', href: '/seller/orders', icon: ShoppingCart },
+    { label: t('seller_nav.dashboard'), href: '/seller/dashboard', icon: Store },
+    { label: t('seller_nav.add_product'), href: '/seller/add-product', icon: Plus },
+    { label: t('seller_nav.manage_product'), href: '/seller/manage-product', icon: Package },
+    { label: t('seller_nav.orders'), href: '/seller/orders', icon: ShoppingCart },
   ];
 
   return (
@@ -126,7 +128,7 @@ const SellerSidebar = ({
                 <DropdownMenuItem asChild>
                   <Link to="/create-store">
                     <Plus className="mr-2 h-4 w-4" />
-                    Create New Store
+                    {t('seller_nav.create_store')}
                   </Link>
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -171,7 +173,7 @@ const SellerSidebar = ({
             className="w-full justify-start"
           >
             <LogOut className="mr-2 h-4 w-4" />
-            Logout
+            {t('seller_nav.logout')}
           </Button>
         </div>
       </aside>
