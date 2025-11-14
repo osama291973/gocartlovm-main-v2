@@ -7,6 +7,10 @@ type TranslationInput = {
   language_code: string;
   name: string;
   description?: string | null;
+  // Optional machine-translation metadata
+  is_machine_translated?: boolean;
+  translation_engine?: string | null;
+  translated_from_language?: string | null;
 };
 
 type ProductInput = {
@@ -84,6 +88,8 @@ export function useCreateProduct(): UseCreateProductResult {
           .insert([
             {
               store_id: product.store_id,
+              // include product-level name (default language or primary provided name)
+              name: product.name ?? null,
               category_id: product.category_id || null,
               slug: product.slug,
               price: product.price,
@@ -113,9 +119,10 @@ export function useCreateProduct(): UseCreateProductResult {
           language_code: t.language_code,
           name: t.name,
           description: t.description || null,
-          is_machine_translated: false, // User-entered, so not machine translated
-          translation_engine: null,
-          translated_from_language: null,
+          // Allow callers to mark machine translations. Default to false for safety.
+          is_machine_translated: t.is_machine_translated ?? false,
+          translation_engine: t.translation_engine ?? null,
+          translated_from_language: t.translated_from_language ?? null,
         }));
 
         const rpcResult = await callTranslateRpc(translationPayloads);

@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Plus, Upload, X } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import { translateText } from '@/utils/libreTranslate';
 
 interface Store {
   id: string;
@@ -243,25 +244,64 @@ const AddProductPage = () => {
       const isEnglishInput = !!formData.enName;
       const isArabicInput = !!formData.arName;
 
-      // Build translations array - always include both languages
+      // Build translations array - always include both languages when possible.
+      // If autoTranslate is enabled, generate the missing language via LibreTranslate.
       let translationsToCreate: any[] = [];
 
       if (isEnglishInput) {
-        // User entered in English - add English translation
         translationsToCreate.push({
           language_code: 'en',
           name: formData.enName,
           description: formData.enDescription || null,
+          is_machine_translated: false,
+          translation_engine: null,
+          translated_from_language: null,
         });
       }
 
       if (isArabicInput) {
-        // User entered in Arabic - add Arabic translation
         translationsToCreate.push({
           language_code: 'ar',
           name: formData.arName,
           description: formData.arDescription || null,
+          is_machine_translated: false,
+          translation_engine: null,
+          translated_from_language: null,
         });
+      }
+
+      // If autoTranslate is enabled, and the seller only filled one language,
+      // generate the other language automatically using the local or remote LibreTranslate endpoint.
+      if (autoTranslate && (isEnglishInput !== isArabicInput)) {
+        try {
+          if (isEnglishInput && !isArabicInput) {
+            const translatedName = await translateText(formData.enName, 'en', 'ar');
+            const translatedDesc = formData.enDescription ? await translateText(formData.enDescription, 'en', 'ar') : null;
+            translationsToCreate.push({
+              language_code: 'ar',
+              name: translatedName || '',
+              description: translatedDesc || null,
+              is_machine_translated: true,
+              translation_engine: 'libretranslate',
+              translated_from_language: 'en',
+            });
+          } else if (isArabicInput && !isEnglishInput) {
+            const translatedName = await translateText(formData.arName, 'ar', 'en');
+            const translatedDesc = formData.arDescription ? await translateText(formData.arDescription, 'ar', 'en') : null;
+            translationsToCreate.push({
+              language_code: 'en',
+              name: translatedName || '',
+              description: translatedDesc || null,
+              is_machine_translated: true,
+              translation_engine: 'libretranslate',
+              translated_from_language: 'ar',
+            });
+          }
+        } catch (txErr: any) {
+          console.error('Auto-translate failed', txErr);
+          // fall back to saving only the provided language; surface a toast but allow save
+          toast({ title: 'Translation error', description: 'Auto-translate failed — saving original text', variant: 'destructive' });
+        }
       }
 
       // Determine product description
@@ -281,6 +321,8 @@ const AddProductPage = () => {
           .update({
             store_id: selectedStore.id,
             category_id: formData.categoryId || null,
+            // persist the product-level name when editing
+            name: isEnglishInput ? formData.enName : (isArabicInput ? formData.arName : null),
             slug: formData.slug || 'product-' + Date.now(),
             price: parseFloat(formData.price) || 0,
             original_price: parseFloat(formData.originalPrice) || 0,
@@ -309,6 +351,8 @@ const AddProductPage = () => {
           {
             store_id: selectedStore.id,
             category_id: formData.categoryId || null,
+            // set product-level name to the primary language the seller entered
+            name: isEnglishInput ? formData.enName : (isArabicInput ? formData.arName : null),
             slug: uniqueSlug,
             price: parseFloat(formData.price) || 0,
             original_price: parseFloat(formData.originalPrice) || 0,
