@@ -8,12 +8,14 @@ import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { useToast } from '@/hooks/use-toast';
 import { Store, Package, ShoppingCart } from 'lucide-react';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 const AdminStores = () => {
   const { user, hasRole, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const { t } = useLanguage();
 
   useEffect(() => {
     if (!authLoading && (!user || !hasRole('admin'))) {
@@ -153,19 +155,19 @@ const AdminStores = () => {
           <nav className="space-y-2">
             <button onClick={() => navigate('/admin')} className="w-full flex items-center gap-3 px-4 py-2 hover:bg-accent rounded-lg">
               <Store className="h-5 w-5" />
-              Dashboard
+              {t('admin_nav_dashboard')}
             </button>
             <button className="w-full flex items-center gap-3 px-4 py-2 bg-primary/10 text-primary rounded-lg border-l-4 border-primary">
               <Store className="h-5 w-5" />
-              Stores
+              {t('admin_nav_stores')}
             </button>
             <button onClick={() => navigate('/admin/seller-applications')} className="w-full flex items-center gap-3 px-4 py-2 hover:bg-accent rounded-lg">
               <Package className="h-5 w-5" />
-              Approve Store
+              {t('admin_nav_applications')}
             </button>
             <button onClick={() => navigate('/admin/coupons')} className="w-full flex items-center gap-3 px-4 py-2 hover:bg-accent rounded-lg">
               <ShoppingCart className="h-5 w-5" />
-              Coupons
+              {t('admin_nav_coupons')}
             </button>
           </nav>
         </aside>
@@ -176,9 +178,9 @@ const AdminStores = () => {
               <span className="text-green-600">go</span><span className="text-black">cart</span>
             </a>
             <div className="flex justify-between items-start mb-6">
-              <h1 className="text-4xl font-bold">Stores Management</h1>
+              <h1 className="text-4xl font-bold">{t('admin_dashboard_title')}</h1>
               <div className="flex items-center gap-4">
-                <p className="text-sm">Hi, Osama</p>
+                <p className="text-sm">{t('admin_greeting').replace('{name}', user?.user_metadata?.full_name || 'Admin')}</p>
                 <div className="w-10 h-10 rounded-full bg-[hsl(var(--primary))] text-primary-foreground flex items-center justify-center">
                   O
                 </div>

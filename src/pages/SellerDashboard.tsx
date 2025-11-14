@@ -90,10 +90,10 @@ const SellerDashboard = () => {
         <div className="sticky top-0 z-40 border-b bg-white">
           <div className="px-6 py-4 flex items-center justify-between">
             <Link to="/" className="text-2xl font-bold text-green-600 hover:text-green-700">
-              {t('header.brand') ?? 'gocart'}<span className="text-red-500">.</span>
+              {t('header_brand') ?? 'gocart'}<span className="text-red-500">.</span>
             </Link>
             <div className="text-sm text-gray-600">
-              <span>{t('header.store_label') ?? 'Store:'}</span>
+              <span>{t('header_store_label') ?? 'Store:'}</span>
               <span className="font-semibold ml-1">{currentStore?.slug || 'N/A'}</span>
             </div>
           </div>
@@ -102,7 +102,7 @@ const SellerDashboard = () => {
         {/* Content Area */}
         <div className="flex-1 overflow-auto p-6">
           <div className="mb-8">
-            <h1 className="text-3xl font-bold mb-2">{t('seller_dashboard.title') ?? 'Seller Dashboard'}</h1>
+            <h1 className="text-3xl font-bold mb-2">{t('seller_dashboard_title') ?? 'Seller Dashboard'}</h1>
           </div>
 
           {/* Stats Grid - 5 columns */}
@@ -110,7 +110,7 @@ const SellerDashboard = () => {
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-xs font-medium">
-                  {t('dashboard.stats.total_products') ?? 'Total Products'}
+                  {t('dashboard_stats_total_products') ?? 'Total Products'}
                 </CardTitle>
                 <Package className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
@@ -122,7 +122,7 @@ const SellerDashboard = () => {
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-xs font-medium">
-                  {t('dashboard.stats.total_earnings') ?? 'Total Earnings'}
+                  {t('dashboard_stats_total_earnings') ?? 'Total Earnings'}
                 </CardTitle>
                 <TrendingUp className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
@@ -134,7 +134,7 @@ const SellerDashboard = () => {
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-xs font-medium">
-                  {t('dashboard.stats.total_orders') ?? 'Total Orders'}
+                  {t('dashboard_stats_total_orders') ?? 'Total Orders'}
                 </CardTitle>
                 <Store className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
@@ -146,7 +146,7 @@ const SellerDashboard = () => {
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-xs font-medium">
-                  {t('dashboard.stats.total_ratings') ?? 'Total Ratings'}
+                  {t('dashboard_stats_total_ratings') ?? 'Total Ratings'}
                 </CardTitle>
                 <Star className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
@@ -158,7 +158,7 @@ const SellerDashboard = () => {
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-xs font-medium">
-                  {t('dashboard.stats.total_reviews') ?? 'Total Reviews'}
+                  {t('dashboard_stats_total_reviews') ?? 'Total Reviews'}
                 </CardTitle>
                 <MessageSquare className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
@@ -172,28 +172,28 @@ const SellerDashboard = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg">{t('dashboard.recent_orders.title') ?? 'Recent Orders'}</CardTitle>
+                <CardTitle className="text-lg">{t('dashboard_recent_orders_title') ?? 'Recent Orders'}</CardTitle>
               </CardHeader>
               <CardContent className="text-sm text-muted-foreground">
-                {t('dashboard.recent_orders.empty') ?? 'No orders yet. Start selling to see orders here'}
+                {t('dashboard_recent_orders_empty') ?? 'No orders yet. Start selling to see orders here'}
               </CardContent>
             </Card>
 
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg">{t('dashboard.quick_stats.title') ?? 'Quick Stats'}</CardTitle>
+                <CardTitle className="text-lg">{t('dashboard_quick_stats_title') ?? 'Quick Stats'}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">{t('dashboard.quick_stats.conversion_rate') ?? 'Conversion Rate'}</span>
+                  <span className="text-muted-foreground">{t('dashboard_quick_stats_conversion_rate') ?? 'Conversion Rate'}</span>
                   <span className="font-medium">0%</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">{t('dashboard.quick_stats.avg_order_value') ?? 'Avg Order Value'}</span>
+                  <span className="text-muted-foreground">{t('dashboard_quick_stats_avg_order_value') ?? 'Avg Order Value'}</span>
                   <span className="font-medium">$0.00</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">{t('dashboard.quick_stats.customer_satisfaction') ?? 'Customer Satisfaction'}</span>
+                  <span className="text-muted-foreground">{t('dashboard_quick_stats_customer_satisfaction') ?? 'Customer Satisfaction'}</span>
                   <span className="font-medium">--</span>
                 </div>
               </CardContent>

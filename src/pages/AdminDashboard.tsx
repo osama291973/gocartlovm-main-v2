@@ -4,6 +4,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Package, DollarSign, ShoppingCart, Store } from 'lucide-react';
 import { Area, AreaChart, ResponsiveContainer, XAxis, YAxis } from 'recharts';
@@ -28,7 +29,7 @@ const AdminDashboard = () => {
         supabase.from('stores').select('*', { count: 'exact', head: true }),
       ]);
 
-      const totalRevenue = ordersRes.data?.reduce((sum, order) => sum + Number(order.total), 0) || 0;
+  const totalRevenue = (ordersRes.data || []).reduce((sum: number, order: any) => sum + Number(order?.total || 0), 0);
 
       return {
         totalProducts: productsRes.count || 0,
@@ -44,6 +45,8 @@ const AdminDashboard = () => {
     date: `2025-${String(Math.floor(i / 30) + 8).padStart(2, '0')}-${String((i % 30) + 1).padStart(2, '0')}`,
     orders: Math.floor(Math.random() * 50) + 10,
   }));
+
+  const { t } = useLanguage();
 
   if (authLoading || isLoading) {
     return (
@@ -118,9 +121,9 @@ const AdminDashboard = () => {
               <span className="text-green-600">go</span><span className="text-black">cart</span>
             </a>
             <div className="flex justify-between items-center">
-              <h1 className="text-4xl font-bold">Admin Dashboard</h1>
+              <h1 className="text-4xl font-bold">{t('admin_dashboard_title')}</h1>
               <div className="flex items-center gap-4">
-                <p className="text-sm">Hi, Osama</p>
+                <p className="text-sm">{t('admin_greeting').replace('{name}', user?.user_metadata?.full_name || 'Admin')}</p>
                 <div className="w-10 h-10 rounded-full bg-[hsl(var(--primary))] text-primary-foreground flex items-center justify-center">
                   O
                 </div>
@@ -131,7 +134,7 @@ const AdminDashboard = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Total Products</CardTitle>
+                <CardTitle className="text-sm font-medium">{t('admin_total_products')}</CardTitle>
                 <Package className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
@@ -141,7 +144,7 @@ const AdminDashboard = () => {
 
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
+                <CardTitle className="text-sm font-medium">{t('admin_total_revenue')}</CardTitle>
                 <DollarSign className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
@@ -153,7 +156,7 @@ const AdminDashboard = () => {
 
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Total Orders</CardTitle>
+                <CardTitle className="text-sm font-medium">{t('admin_total_orders')}</CardTitle>
                 <ShoppingCart className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
@@ -163,7 +166,7 @@ const AdminDashboard = () => {
 
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Total Stores</CardTitle>
+                <CardTitle className="text-sm font-medium">{t('admin_total_stores')}</CardTitle>
                 <Store className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
@@ -172,9 +175,9 @@ const AdminDashboard = () => {
             </Card>
           </div>
 
-          <Card>
+            <Card>
             <CardHeader>
-              <CardTitle>Orders / Day</CardTitle>
+              <CardTitle>{t('admin_orders_per_day')}</CardTitle>
             </CardHeader>
             <CardContent>
               <ChartContainer config={{ orders: { color: 'hsl(var(--primary))' } }} className="h-[400px]">

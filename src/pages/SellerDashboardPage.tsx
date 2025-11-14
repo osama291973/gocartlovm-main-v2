@@ -2,6 +2,7 @@ import { useOutletContext } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { Package, TrendingUp, ShoppingCart, Star, MessageSquare } from 'lucide-react';
 
 interface SellerDashboardPageProps {
@@ -51,35 +52,35 @@ const SellerDashboardPage = () => {
 
   const summaryCards = [
     {
-      title: 'Total Products',
+      title: 'dashboard_stats_total_products',
       value: stats.totalProducts || 0,
       icon: Package,
       color: 'text-blue-600',
       bgColor: 'bg-blue-50',
     },
     {
-      title: 'Total Earnings',
+      title: 'dashboard_stats_total_earnings',
       value: `$${(stats.totalEarnings || 0).toFixed(2)}`,
       icon: TrendingUp,
       color: 'text-green-600',
       bgColor: 'bg-green-50',
     },
     {
-      title: 'Total Orders',
+      title: 'dashboard_stats_total_orders',
       value: stats.totalOrders || 0,
       icon: ShoppingCart,
       color: 'text-orange-600',
       bgColor: 'bg-orange-50',
     },
     {
-      title: 'Total Ratings',
+      title: 'dashboard_stats_total_ratings',
       value: stats.totalRatings || 0,
       icon: Star,
       color: 'text-yellow-600',
       bgColor: 'bg-yellow-50',
     },
     {
-      title: 'Total Reviews',
+      title: 'dashboard_stats_total_reviews',
       value: stats.totalReviews || 0,
       icon: MessageSquare,
       color: 'text-purple-600',
@@ -91,9 +92,10 @@ const SellerDashboardPage = () => {
     <div className="p-8">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-4xl font-bold mb-2">Seller Dashboard</h1>
+        {/** use translations */}
+        <h1 className="text-4xl font-bold mb-2">{useLanguage().t('seller_dashboard_title')}</h1>
         <p className="text-muted-foreground">
-          Store: <span className="font-semibold">{selectedStore?.name || selectedStore?.slug}</span>
+          {useLanguage().t('header_store_label')} <span className="font-semibold">{selectedStore?.name || selectedStore?.slug}</span>
         </p>
       </div>
 
@@ -106,7 +108,7 @@ const SellerDashboardPage = () => {
               <CardHeader className="pb-3">
                 <div className="flex items-center justify-between">
                   <CardTitle className="text-sm font-medium text-muted-foreground">
-                    {card.title}
+                    {useLanguage().t(card.title)}
                   </CardTitle>
                   <div className={`${card.bgColor} p-2 rounded`}>
                     <Icon className={`h-5 w-5 ${card.color}`} />

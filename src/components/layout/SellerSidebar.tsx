@@ -23,7 +23,7 @@ export function SellerSidebar() {
             G
           </div>
           <span className="text-lg font-bold">
-            <span className="text-gray-800">Great</span><span className="text-green-600">Stack</span>
+            <span className="text-green-600">Go</span><span className="text-gray-800">Cart</span>
           </span>
         </div>
       </div>

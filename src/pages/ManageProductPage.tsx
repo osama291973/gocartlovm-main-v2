@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { Button } from '@/components/ui/button';
 import { Edit2, Trash2, Eye } from 'lucide-react';
 
@@ -44,32 +45,32 @@ const ManageProductPage = () => {
     <div className="p-8">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-4xl font-bold mb-2">Manage Products</h1>
+        <h1 className="text-4xl font-bold mb-2">{useLanguage().t('manage_products')}</h1>
         <p className="text-muted-foreground">
-          Store: <span className="font-semibold">{selectedStore?.name || selectedStore?.slug}</span>
+          {useLanguage().t('header_store_label')} <span className="font-semibold">{selectedStore?.name || selectedStore?.slug}</span>
         </p>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Your Products</CardTitle>
+          <CardTitle>{useLanguage().t('your_products')}</CardTitle>
         </CardHeader>
         <CardContent>
           {products.length === 0 ? (
             <div className="text-center py-12">
-              <p className="text-muted-foreground mb-4">No products yet</p>
-              <p className="text-sm text-muted-foreground">Start by adding your first product</p>
+              <p className="text-muted-foreground mb-4">{useLanguage().t('no_products_yet')}</p>
+              <p className="text-sm text-muted-foreground">{useLanguage().t('start_adding_first_product')}</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
                   <tr className="border-b">
-                    <th className="text-left py-3 px-4 font-semibold">Product Name</th>
-                    <th className="text-left py-3 px-4 font-semibold">Price</th>
-                    <th className="text-left py-3 px-4 font-semibold">Stock</th>
-                    <th className="text-left py-3 px-4 font-semibold">Rating</th>
-                    <th className="text-left py-3 px-4 font-semibold">Actions</th>
+                    <th className="text-left py-3 px-4 font-semibold">{useLanguage().t('product_name')}</th>
+                    <th className="text-left py-3 px-4 font-semibold">{useLanguage().t('price_label')}</th>
+                    <th className="text-left py-3 px-4 font-semibold">{useLanguage().t('stock_label')}</th>
+                    <th className="text-left py-3 px-4 font-semibold">{useLanguage().t('rating_label')}</th>
+                    <th className="text-left py-3 px-4 font-semibold">{useLanguage().t('actions_label')}</th>
                   </tr>
                 </thead>
                 <tbody>

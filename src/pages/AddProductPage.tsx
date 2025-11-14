@@ -345,8 +345,8 @@ const AddProductPage = () => {
       {/* Header */}
       <div className="border-b border-gray-200 bg-white">
         <div className={`px-8 py-8 ${isRTL ? 'text-right ml-auto' : 'text-left'}`} style={{ maxWidth: '1280px' }}>
-          <h1 className="text-3xl font-bold text-gray-900">Add New Products</h1>
-          <p className={`text-gray-600 text-sm mt-2 ${isRTL ? 'text-right' : 'text-left'}`}>Add products to your store: <span className="font-semibold">{selectedStore?.name || selectedStore?.slug}</span></p>
+            <h1 className="text-3xl font-bold text-gray-900">{t('add_product_page_title')}</h1>
+            <p className={`text-gray-600 text-sm mt-2 ${isRTL ? 'text-right' : 'text-left'}`}>{t('add_products_to_store')} <span className="font-semibold">{selectedStore?.name || selectedStore?.slug}</span></p>
         </div>
       </div>
 
@@ -376,7 +376,7 @@ const AddProductPage = () => {
                       <div className="absolute inset-0 bg-black/50 rounded-lg flex items-center justify-center">
                         <div className="text-center">
                           <div className="animate-spin rounded-full h-6 w-6 border-2 border-white border-t-transparent mx-auto mb-2"></div>
-                          <span className="text-white text-xs font-medium">Uploading...</span>
+                          <span className="text-white text-xs font-medium">{t('uploading')}</span>
                         </div>
                       </div>
                     )}
@@ -385,7 +385,7 @@ const AddProductPage = () => {
                   <label className="w-full aspect-square border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:bg-gray-50 hover:border-gray-400 transition-all">
                     <div className="text-center">
                       <Upload className="h-8 w-8 mx-auto text-gray-400 mb-2" />
-                      <span className="text-sm text-gray-600 font-medium">Click to upload product image</span>
+                      <span className="text-sm text-gray-600 font-medium">{t('click_to_upload_product_image')}</span>
                     </div>
                     <input
                       type="file"
