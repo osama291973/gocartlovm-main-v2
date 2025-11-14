@@ -2,17 +2,23 @@ import { useParams, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useAuth } from '@/contexts/AuthContext';
+import { useReviews } from '@/hooks/useReviews';
 import { Button } from '@/components/ui/button';
 import { Star, ShoppingCart, Package, CreditCard, Users, ChevronRight } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { VariantSelector } from '@/components/VariantSelector';
+import { ReviewStats } from '@/components/ReviewStats';
+import { ReviewForm } from '@/components/ReviewForm';
+import { ReviewList } from '@/components/ReviewList';
 import { useState } from 'react';
 import type { ProductVariantWithAttributes, ProductWithTranslations } from '@/types/product';
 
 const ProductDetail = () => {
   const { slug } = useParams();
   const { language, t } = useLanguage();
+  const { user } = useAuth();
 
   const [selectedVariant, setSelectedVariant] = useState<ProductVariantWithAttributes | null>(null);
 
@@ -21,16 +27,28 @@ const ProductDetail = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('products')
-        .select(`
+        .select(
+          `
           *,
           product_translations(*)
-        `)
+        `
+        )
         .eq('slug', slug)
         .single();
       if (error) throw error;
       return data as ProductWithTranslations;
     },
   });
+
+  const {
+    reviews,
+    userReview,
+    createReview,
+    deleteReview,
+    markAsHelpful,
+    averageRating,
+    ratingDistribution,
+  } = useReviews(product?.id);
 
   const getTranslation = (translations: any[] | undefined, fallback: string, product?: any) => {
     const translation = translations?.find((t) => t.language_code === language);
@@ -66,16 +84,22 @@ const ProductDetail = () => {
 
   const productName = getTranslation(product.product_translations, 'Product', product);
   const discount = product.original_price
-    ? Math.round(((product.original_price - product.price) / product.original_price) * 100)
+    ? Math.round(
+        ((product.original_price - product.price) / product.original_price) * 100
+      )
     : 0;
 
   return (
     <div className="container mx-auto px-4 py-6">
       {/* Breadcrumb */}
       <nav className="flex items-center gap-2 text-sm text-muted-foreground mb-6">
-        <Link to="/" className="hover:text-foreground">Home</Link>
+        <Link to="/" className="hover:text-foreground">
+          Home
+        </Link>
         <ChevronRight className="h-4 w-4" />
-        <Link to="/shop" className="hover:text-foreground">Products</Link>
+        <Link to="/shop" className="hover:text-foreground">
+          Products
+        </Link>
         <ChevronRight className="h-4 w-4" />
         <span className="text-foreground">{productName}</span>
       </nav>
@@ -84,7 +108,7 @@ const ProductDetail = () => {
         {/* Product Image */}
         <div className="space-y-4">
           <div className="aspect-square rounded-lg overflow-hidden bg-muted/30">
-            {(product.image_url || (product.gallery_urls && product.gallery_urls[0])) ? (
+            {product.image_url || (product.gallery_urls && product.gallery_urls[0]) ? (
               <img
                 src={product.image_url || (product.gallery_urls && product.gallery_urls[0])}
                 alt={productName}
@@ -102,22 +126,22 @@ const ProductDetail = () => {
         <div className="space-y-6">
           <div>
             <h1 className="text-3xl font-bold mb-3">{productName}</h1>
-            
+
             <div className="flex items-center gap-2 mb-4">
               <div className="flex items-center gap-0.5">
                 {[...Array(5)].map((_, i) => (
                   <Star
                     key={i}
                     className={`h-4 w-4 ${
-                      i < Math.floor(product.rating)
-                        ? 'fill-green-500 text-green-500'
+                      i < Math.floor(Number(averageRating))
+                        ? 'fill-yellow-400 text-yellow-400'
                         : 'fill-muted text-muted'
                     }`}
                   />
                 ))}
               </div>
               <span className="text-sm text-muted-foreground">
-                {product.reviews_count} Reviews
+                {reviews.length} {reviews.length === 1 ? 'Review' : 'Reviews'}
               </span>
             </div>
 
@@ -134,7 +158,13 @@ const ProductDetail = () => {
                           ${Number(selectedVariant.original_price).toFixed(0)}
                         </span>
                         <span className="text-sm text-green-600">
-                          Save {Math.round(((selectedVariant.original_price - selectedVariant.price) / selectedVariant.original_price) * 100)}% right now
+                          Save{' '}
+                          {Math.round(
+                            ((selectedVariant.original_price - selectedVariant.price) /
+                              selectedVariant.original_price) *
+                              100
+                          )}
+                          % right now
                         </span>
                       </>
                     )}
@@ -146,15 +176,15 @@ const ProductDetail = () => {
                 )
               ) : (
                 <>
-                  <span className="text-4xl font-bold">${Number(product.price).toFixed(0)}</span>
+                  <span className="text-4xl font-bold">
+                    ${Number(product.price).toFixed(0)}
+                  </span>
                   {product.original_price && (
                     <>
                       <span className="text-xl text-muted-foreground line-through">
                         ${Number(product.original_price).toFixed(0)}
                       </span>
-                      <span className="text-sm text-green-600">
-                        Save {discount}% right now
-                      </span>
+                      <span className="text-sm text-green-600">Save {discount}% right now</span>
                     </>
                   )}
                 </>
@@ -164,10 +194,7 @@ const ProductDetail = () => {
 
           {/* Variant Selector */}
           {product.has_variants && (
-            <VariantSelector
-              productId={product.id}
-              onVariantChange={setSelectedVariant}
-            />
+            <VariantSelector productId={product.id} onVariantChange={setSelectedVariant} />
           )}
 
           {/* Stock and Price Info */}
@@ -175,8 +202,8 @@ const ProductDetail = () => {
             {product.has_variants ? (
               selectedVariant ? (
                 <span>
-                  {selectedVariant.stock > 0 
-                    ? `${selectedVariant.stock} in stock` 
+                  {selectedVariant.stock > 0
+                    ? `${selectedVariant.stock} in stock`
                     : 'Out of stock'}
                 </span>
               ) : (
@@ -184,16 +211,14 @@ const ProductDetail = () => {
               )
             ) : (
               <span>
-                {product.stock > 0 
-                  ? `${product.stock} in stock` 
-                  : 'Out of stock'}
+                {product.stock > 0 ? `${product.stock} in stock` : 'Out of stock'}
               </span>
             )}
           </div>
 
           {/* Add to Cart Button */}
-          <Button 
-            size="lg" 
+          <Button
+            size="lg"
             className="w-full md:w-auto px-12 bg-[#1a1f2e] hover:bg-[#2a2f3e] text-white"
             disabled={
               product.has_variants
@@ -201,11 +226,7 @@ const ProductDetail = () => {
                 : product.stock === 0
             }
           >
-            {product.has_variants && !selectedVariant ? (
-              'Select Options'
-            ) : (
-              'Add to Cart'
-            )}
+            {product.has_variants && !selectedVariant ? 'Select Options' : 'Add to Cart'}
           </Button>
 
           {/* Features */}
@@ -226,23 +247,82 @@ const ProductDetail = () => {
         </div>
       </div>
 
-      {/* Description Tabs */}
+      {/* Description and Reviews Tabs */}
       <div className="mt-12">
         <Tabs defaultValue="description" className="w-full">
           <TabsList>
             <TabsTrigger value="description">Description</TabsTrigger>
-            <TabsTrigger value="reviews">Reviews</TabsTrigger>
+            <TabsTrigger value="reviews">
+              Reviews ({reviews.length})
+            </TabsTrigger>
           </TabsList>
           <TabsContent value="description" className="mt-6">
             <p className="text-muted-foreground leading-relaxed">
-              {productName} with a sleek design. It's perfect for any room. It's made of high-quality
-              materials and comes with a lifetime warranty.
+              {productName} with a sleek design. It's perfect for any room. It's made of
+              high-quality materials and comes with a lifetime warranty.
             </p>
           </TabsContent>
           <TabsContent value="reviews" className="mt-6">
-            <p className="text-muted-foreground">
-              {product.reviews_count} customer reviews for this product.
-            </p>
+            <div className="space-y-8">
+              {/* Review Stats */}
+              {reviews.length > 0 && (
+                <ReviewStats
+                  averageRating={averageRating}
+                  ratingDistribution={ratingDistribution}
+                  totalReviews={reviews.length}
+                />
+              )}
+
+              {/* Review Form - Show if user is logged in and hasn't reviewed */}
+              {user ? (
+                !userReview ? (
+                  <ReviewForm
+                    onSubmit={async (data) => {
+                      await createReview.mutateAsync({
+                        product_id: product.id,
+                        ...data,
+                        verified_purchase: false,
+                      });
+                    }}
+                    isLoading={createReview.isPending}
+                  />
+                ) : (
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                    <p className="text-sm text-blue-800">
+                      You have already reviewed this product.
+                    </p>
+                  </div>
+                )
+              ) : (
+                <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+                  <p className="text-sm text-amber-800">
+                    <Link to="/auth" className="font-semibold hover:underline">
+                      Sign in
+                    </Link>{' '}
+                    to write a review.
+                  </p>
+                </div>
+              )}
+
+              {/* Reviews List */}
+              <div>
+                <h3 className="text-lg font-semibold mb-4">
+                  {reviews.length > 0
+                    ? `${reviews.length} ${reviews.length === 1 ? 'Review' : 'Reviews'}`
+                    : 'No reviews yet'}
+                </h3>
+                <ReviewList
+                  reviews={reviews}
+                  onDelete={(reviewId) => {
+                    deleteReview.mutate(reviewId);
+                  }}
+                  onMarkHelpful={(reviewId) => {
+                    markAsHelpful.mutate(reviewId);
+                  }}
+                  isDeleting={deleteReview.isPending}
+                />
+              </div>
+            </div>
           </TabsContent>
         </Tabs>
       </div>
