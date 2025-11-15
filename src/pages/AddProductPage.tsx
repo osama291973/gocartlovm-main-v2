@@ -11,6 +11,10 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Plus, Upload, X } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { translateText } from '@/utils/libreTranslate';
+import { Plus, Upload, X, Sparkles } from 'lucide-react';
+import { generateProductFromImage, GeneratedProductMetadata } from '@/utils/generateProductFromImage';
+import { supabase } from '@/integrations/supabase/client';
+import { translateText } from '@/utils/libreTranslate';
 
 interface Store {
   id: string;
@@ -31,7 +35,8 @@ interface AddProductPageProps {
 const AddProductPage = () => {
   const context = useOutletContext<AddProductPageProps>();
   const selectedStore = context?.selectedStore;
-  const { toast } = useToast();
+import { Plus, Upload, X, Sparkles } from 'lucide-react';
+import { generateProductFromImage, GeneratedProductMetadata } from '@/utils/generateProductFromImage';
   const { language, t } = useLanguage();
   const isRTL = language === 'ar';
   
@@ -48,7 +53,7 @@ const AddProductPage = () => {
   const [formData, setFormData] = useState({
     slug: '',
     price: '',
-    originalPrice: '',
+
     stock: '',
     categoryId: '',
     description: '', // Generic description field (will be mapped to primary language)
@@ -65,6 +70,12 @@ const AddProductPage = () => {
 
   // Simple slugify helper and uniqueness checker to avoid duplicate-slug errors
   const slugify = (text: string) =>
+  
+  // AI Generation state
+  const [generatingFromImage, setGeneratingFromImage] = useState(false);
+  const [showGenerateModal, setShowGenerateModal] = useState(false);
+  const [generatedMetadata, setGeneratedMetadata] = useState<GeneratedProductMetadata | null>(null);
+  const [editingGenerated, setEditingGenerated] = useState<GeneratedProductMetadata | null>(null);
     (text || '')
       .toString()
       .toLowerCase()
