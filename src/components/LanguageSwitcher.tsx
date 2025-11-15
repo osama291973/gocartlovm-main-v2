@@ -1,4 +1,4 @@
-import { Languages } from 'lucide-react';
+import { Globe } from 'lucide-react';
 import { Button } from './ui/button';
 import {
   DropdownMenu,
@@ -8,14 +8,21 @@ import {
 } from './ui/dropdown-menu';
 import { useLanguage } from '@/contexts/LanguageContext';
 
-const LanguageSwitcher = () => {
+interface LanguageSwitcherProps {
+  variant?: 'default' | 'header';
+}
+
+const LanguageSwitcher = ({ variant = 'default' }: LanguageSwitcherProps) => {
   const { language, setLanguage } = useLanguage();
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon" className="relative">
-          <Languages className="h-5 w-5" />
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          className={`relative ${variant === 'header' ? 'text-white hover:bg-green-700' : 'text-gray-700 hover:bg-gray-100'}`}>
+          <Globe className={`h-5 w-5 ${variant === 'header' ? 'text-white' : 'text-gray-700'}`} />
           <span className="sr-only">Switch language</span>
         </Button>
       </DropdownMenuTrigger>

@@ -118,26 +118,39 @@ const AddProductPage = () => {
     if (id) {
       (async () => {
         try {
+          // Fetch product and its translations in a single query
           const { data, error } = await (supabase as any)
             .from('products')
-            .select('*')
+            // include related translations if the foreign key constraint is configured
+            .select('*, product_translations(*)')
             .eq('id', id)
             .single();
+
           if (error) throw error;
           if (data) {
             setEditingId(id);
-            setFormData({
+
+            const baseForm = {
               slug: data.slug || '',
               price: String(data.price || ''),
               originalPrice: String(data.original_price || ''),
               stock: String(data.stock || ''),
               categoryId: data.category_id || '',
               description: data.description || '',
-              enName: '',
-              enDescription: '',
-              arName: '',
-              arDescription: '',
+            };
+
+            const translations = Array.isArray(data.product_translations) ? data.product_translations : [];
+            const enTrans = translations.find((t: any) => t.language_code === 'en') || null;
+            const arTrans = translations.find((t: any) => t.language_code === 'ar') || null;
+
+            setFormData({
+              ...baseForm,
+              enName: enTrans?.name || (data.name || ''),
+              enDescription: enTrans?.description || '',
+              arName: arTrans?.name || '',
+              arDescription: arTrans?.description || '',
             });
+
             if (data.gallery_urls && Array.isArray(data.gallery_urls)) {
               setUploadedImages(data.gallery_urls.filter(Boolean));
             } else if (data.image_url) {

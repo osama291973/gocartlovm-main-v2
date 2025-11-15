@@ -15,21 +15,17 @@ export function SellerSidebar() {
   ];
 
   return (
-    <aside className="w-56 bg-white border-r border-gray-200 flex flex-col h-screen">
-      {/* Sidebar Header with Brand */}
-      <div className="px-6 py-6 border-b border-gray-200">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-gradient-to-br from-green-500 to-green-600 rounded-lg flex items-center justify-center text-white font-bold text-sm">
-            G
-          </div>
-          <span className="text-lg font-bold">
-            <span className="text-green-600">Go</span><span className="text-gray-800">Cart</span>
-          </span>
-        </div>
+    <div className="flex flex-col h-full">
+      {/* Store Logo / Header */}
+      <div className="px-4 py-6 border-b">
+        <Link to="/seller" className="flex items-center gap-3">
+          <div className="w-10 h-10 bg-gradient-to-br from-cyan-400 to-cyan-600 rounded flex items-center justify-center text-white font-bold text-sm">GS</div>
+          <div className="text-sm font-semibold text-gray-900">{t('seller_sidebar_store_logo') ?? 'GreatStack'}</div>
+        </Link>
       </div>
 
       {/* Navigation Menu */}
-      <nav className="flex-1 px-4 py-6 space-y-2">
+      <nav className="flex-1 px-2 py-4 space-y-2 overflow-auto">
         {menu.map((m) => {
           const Icon = m.icon;
           const isActive = location.pathname === m.href;
@@ -49,7 +45,7 @@ export function SellerSidebar() {
           );
         })}
       </nav>
-    </aside>
+    </div>
   );
 }
 
