@@ -8,13 +8,10 @@ import { useTranslationMutations } from '@/hooks/useTranslationMutations';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Plus, Upload, X } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
-import { translateText } from '@/utils/libreTranslate';
 import { Plus, Upload, X, Sparkles } from 'lucide-react';
-import { generateProductFromImage, GeneratedProductMetadata } from '@/utils/generateProductFromImage';
 import { supabase } from '@/integrations/supabase/client';
 import { translateText } from '@/utils/libreTranslate';
+import { generateProductFromImage, GeneratedProductMetadata } from '@/utils/generateProductFromImage';
 
 interface Store {
   id: string;
@@ -35,12 +32,11 @@ interface AddProductPageProps {
 const AddProductPage = () => {
   const context = useOutletContext<AddProductPageProps>();
   const selectedStore = context?.selectedStore;
-import { Plus, Upload, X, Sparkles } from 'lucide-react';
-import { generateProductFromImage, GeneratedProductMetadata } from '@/utils/generateProductFromImage';
   const { language, t } = useLanguage();
   const isRTL = language === 'ar';
   
   // Hooks
+  const { toast } = useToast();
   const { createProduct, isLoading: isCreatingProduct, error: createError } = useCreateProduct();
   const { upsertTranslations } = useTranslationMutations();
 
@@ -53,7 +49,7 @@ import { generateProductFromImage, GeneratedProductMetadata } from '@/utils/gene
   const [formData, setFormData] = useState({
     slug: '',
     price: '',
-
+    originalPrice: '',
     stock: '',
     categoryId: '',
     description: '', // Generic description field (will be mapped to primary language)
@@ -67,15 +63,19 @@ import { generateProductFromImage, GeneratedProductMetadata } from '@/utils/gene
   const [showOtherTranslations, setShowOtherTranslations] = useState(false);
   // Placeholder for future auto-translate option (Edge Function)
   const [autoTranslate, setAutoTranslate] = useState(false);
-
-  // Simple slugify helper and uniqueness checker to avoid duplicate-slug errors
-  const slugify = (text: string) =>
   
   // AI Generation state
   const [generatingFromImage, setGeneratingFromImage] = useState(false);
   const [showGenerateModal, setShowGenerateModal] = useState(false);
   const [generatedMetadata, setGeneratedMetadata] = useState<GeneratedProductMetadata | null>(null);
   const [editingGenerated, setEditingGenerated] = useState<GeneratedProductMetadata | null>(null);
+  
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+
+  // Simple slugify helper and uniqueness checker to avoid duplicate-slug errors
+  const slugify = (text: string) =>
     (text || '')
       .toString()
       .toLowerCase()
@@ -109,10 +109,6 @@ import { generateProductFromImage, GeneratedProductMetadata } from '@/utils/gene
     }
     return `${base}-${Date.now()}`;
   };
-
-  const [editingId, setEditingId] = useState<string | null>(null);
-  const [searchParams] = useSearchParams();
-  const navigate = useNavigate();
 
   // Fetch categories on mount
   useEffect(() => {

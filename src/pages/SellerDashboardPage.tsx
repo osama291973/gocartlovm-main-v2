@@ -17,6 +17,7 @@ interface SellerDashboardPageProps {
 const SellerDashboardPage = () => {
   const context = useOutletContext<SellerDashboardPageProps>();
   const selectedStore = context?.selectedStore;
+  const { t } = useLanguage();
 
   // Fetch store stats
   const { data: stats = {} } = useQuery({
@@ -93,9 +94,9 @@ const SellerDashboardPage = () => {
       {/* Header */}
       <div className="mb-8">
         {/** use translations */}
-        <h1 className="text-4xl font-bold mb-2">{useLanguage().t('seller_dashboard_title')}</h1>
+        <h1 className="text-4xl font-bold mb-2">{t('seller_dashboard_title')}</h1>
         <p className="text-muted-foreground">
-          {useLanguage().t('header_store_label')} <span className="font-semibold">{selectedStore?.name || selectedStore?.slug}</span>
+          {t('header_store_label')} <span className="font-semibold">{selectedStore?.name || selectedStore?.slug}</span>
         </p>
       </div>
 
@@ -108,7 +109,7 @@ const SellerDashboardPage = () => {
               <CardHeader className="pb-3">
                 <div className="flex items-center justify-between">
                   <CardTitle className="text-sm font-medium text-muted-foreground">
-                    {useLanguage().t(card.title)}
+                    {t(card.title)}
                   </CardTitle>
                   <div className={`${card.bgColor} p-2 rounded`}>
                     <Icon className={`h-5 w-5 ${card.color}`} />
@@ -127,12 +128,12 @@ const SellerDashboardPage = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card>
           <CardHeader>
-            <CardTitle>Recent Orders</CardTitle>
+            <CardTitle>{t('dashboard_recent_orders_title')}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
               <p className="text-sm text-muted-foreground text-center py-8">
-                No orders yet. Start selling to see orders here!
+                {t('dashboard_recent_orders_empty')}
               </p>
             </div>
           </CardContent>
@@ -140,20 +141,20 @@ const SellerDashboardPage = () => {
 
         <Card>
           <CardHeader>
-            <CardTitle>Quick Stats</CardTitle>
+            <CardTitle>{t('dashboard_quick_stats_title')}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
               <div className="flex justify-between items-center py-2 border-b">
-                <span className="text-sm text-muted-foreground">Conversion Rate</span>
+                <span className="text-sm text-muted-foreground">{t('dashboard_quick_stats_conversion_rate')}</span>
                 <span className="font-semibold">0%</span>
               </div>
               <div className="flex justify-between items-center py-2 border-b">
-                <span className="text-sm text-muted-foreground">Avg Order Value</span>
+                <span className="text-sm text-muted-foreground">{t('dashboard_quick_stats_avg_order_value')}</span>
                 <span className="font-semibold">$0.00</span>
               </div>
               <div className="flex justify-between items-center py-2">
-                <span className="text-sm text-muted-foreground">Customer Satisfaction</span>
+                <span className="text-sm text-muted-foreground">{t('dashboard_quick_stats_customer_satisfaction')}</span>
                 <span className="font-semibold">--</span>
               </div>
             </div>

@@ -31,7 +31,7 @@ const Shop = () => {
       <div className="mb-8">
         <h1 className="text-3xl font-bold mb-2">{t('allProducts')}</h1>
         <p className="text-sm text-muted-foreground">
-          Browse our complete collection of products
+          {t('shop.browse_products')}
         </p>
       </div>
 
