@@ -238,6 +238,45 @@ const AddProductPage = () => {
     setUploadedImages(newImages);
   };
 
+  const handleAutofillFromImages = async () => {
+    if (!uploadedImages || uploadedImages.length === 0) {
+      toast({ title: 'Error', description: 'Upload at least one image to generate text', variant: 'destructive' });
+      return;
+    }
+    if (!selectedStore?.id) {
+      toast({ title: 'Error', description: 'Select a store first', variant: 'destructive' });
+      return;
+    }
+
+    setGeneratingFromImage(true);
+    try {
+      // Use the first uploaded image as the primary image for generation
+      const image = uploadedImages[0];
+      const resp = await generateProductFromImage(image, language === 'ar' ? 'ar' : 'en', selectedStore.id);
+      if (!resp.success) {
+        throw new Error(resp.error || 'AI generation failed');
+      }
+      const gen = resp.generated;
+      if (gen) {
+        setFormData(prev => ({
+          ...prev,
+          enName: gen.en?.name || prev.enName,
+          enDescription: gen.en?.description || prev.enDescription,
+          arName: gen.ar?.name || prev.arName,
+          arDescription: gen.ar?.description || prev.arDescription,
+        }));
+        toast({ title: 'Autofill applied', description: 'AI-generated name & description added. Please review before saving.' });
+      } else {
+        throw new Error('No generated data returned');
+      }
+    } catch (err: any) {
+      console.error('Autofill error', err);
+      toast({ title: 'Error', description: err?.message || 'Failed to generate product text', variant: 'destructive' });
+    } finally {
+      setGeneratingFromImage(false);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -464,6 +503,11 @@ const AddProductPage = () => {
             ))}
           </div>
           <p className="text-xs text-gray-500 mt-4 text-center">You can upload up to 4 images, 10MB each</p>
+          <div className="mt-4 flex items-center justify-center">
+            <Button onClick={handleAutofillFromImages} disabled={generatingFromImage || uploadedImages.length === 0} className="px-4 py-2">
+              {generatingFromImage ? t('product_image.generating') ?? 'Generating...' : t('product_image.autofill_button') ?? 'Autofill from images'}
+            </Button>
+          </div>
         </div>
 
         {/* Product Information Section */}
